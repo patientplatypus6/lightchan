@@ -1,0 +1,14 @@
+.thread{
+  background-color: #115009;
+  color: rgb(161, 219, 219);
+  min-height: 100vh;
+  text-align: center;
+}
+
+.threadbanner{
+  width: 100vw;
+  background-color: rgb(198, 205, 211);
+  color: #00008b;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}

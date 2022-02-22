@@ -1,0 +1,114 @@
+.main{
+  background-color: #00008b;
+  color: rgb(116, 158, 158);
+  min-height: 100vh;
+  text-align: center;
+}
+
+.submitcommentbutton{
+  display: inline-block;
+  background-color: rgb(32, 73, 4);
+  color: rgb(130, 190, 130);
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid greenyellow ;
+  padding: 5px;
+  margin: 5px;
+}
+
+.viewbutton{
+  display: inline-block;
+  background-color: rgb(128, 35, 12);
+  color: rgb(223, 220, 41);
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 0.7rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid blue ;
+  padding: 5px;
+}
+
+.replybutton{
+  display: inline-block;
+  background-color: rgb(128, 35, 12);
+  color: rgb(223, 220, 41);
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 0.7rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid blue ;
+  padding: 5px;
+}
+
+.welcomebanner{
+  width: 100vw;
+  background-color: rgb(198, 205, 211);
+  color: #00008b;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.inputval{
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.textval{
+  width: calc(80% + 2px);
+  height: 20vh;
+  resize: none;
+  margin-bottom: 10px;
+}
+
+.submitcommentcontainer{
+  display: inline-block;
+  width: 40vw;
+  text-align: center;
+  /* background-color: aqua; */
+}
+
+.commentcontainer{
+  background: rgb(106, 167, 106);
+  color: black;
+  display: inline-block;
+  width: 40vw;
+  margin: 10px;
+  border: 2px solid grey;
+  text-align: right;
+}
+
+.commenttitlebar{
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.commentcontentbox{
+  padding: 5px;
+  color: rgb(0, 0, 0);
+  background: rgb(145, 184, 145); 
+}
+
+.replycontainer{
+  background: rgb(76, 129, 76);
+  color: black;
+  display: inline-block;
+  width: 40vw;
+  margin: 10px;
+  border: 2px solid grey;
+  text-align: right;
+}
+
+.replytitlebar{
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.replycontentbox{
+  padding: 5px;
+  color: rgb(0, 0, 0);
+  background: rgb(79, 105, 79); 
+}
