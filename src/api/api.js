@@ -12,37 +12,83 @@ import axios from 'axios';
 import { testPost } from '../api/fetch';
 
 import {
-  commentState, commentPostResponse
+  commentGetState, 
+  commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
 } from '../state/state'
 
-function Api({name}){
-  const [comment, setComment] = useRecoilState(commentState);
-  const [response, setResponse] = useRecoilState(commentPostResponse);
+function Api(){
+  const [getcomment, setGetComment] = useRecoilState(commentGetState);
+  const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
+  const [postcomment, setPostComment] = useRecoilState(commentPostState);
+  const [commentpostresponse, setCommentPostResponse] = useRecoilState(commentPostResponse);
+  const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
 
   useEffect(()=>{
-    console.log("inside Api and value of name: ", name)
-    console.log("useEffect of Api and value of comment: ", comment)
-    if(name=='comment' && comment.submit){
+    // console.log("inside Api and value of name: ", name)
+    // console.log("useEffect of Api and value of comment: ", comment)
+    if(postcomment.submit){
       axios.post(
         "http://localhost:8000/lightone/comment/1/", 
-        {title: comment.title, content: comment.content}
+        {title: postcomment.title, content: postcomment.content}
+      )
+      .then(response=>{
+        // console.log("*************************************")
+        // console.log("here is the response: ", response)
+        // console.log("*************************************")
+        setCommentPostResponse({response});
+        setPostComment({title: '', content: '', submit: false})
+      })
+      .catch(response=>{
+        // console.log("*************************************")
+        // console.log('there was an error: ', response)
+        // console.log("*************************************")
+        setCommentPostResponse({response});
+        setPostComment({title: '', content: '', submit: false})
+      })
+    }
+  }, [postcomment])
+
+  useEffect(()=>{ 
+    if(getcomment.submit && getcomment.id!=""){
+      axios.get(
+        "http://localhost:8000/lightone/comment/"+getcomment.id
+      )
+      .then(response=>{
+        // console.log("*************************************")
+        // console.log("here is the response: ", response)
+        // console.log("*************************************")
+        setCommentGetResponse({response});
+        setGetComment({id: '', submit: false})
+      })
+      .catch(response=>{
+        // console.log("*************************************")
+        // console.log('there was an error: ', response)
+        // console.log("*************************************")
+        setCommentGetResponse({response});
+        setGetComment({id: '', submit: false})  
+      })
+    }
+  }, [getcomment])
+
+  useEffect(()=>{
+    if(commentretrieveall.submit){
+      axios.get(
+        "http://localhost:8000/lightone/comments/"
       )
       .then(response=>{
         console.log("*************************************")
         console.log("here is the response: ", response)
         console.log("*************************************")
-        setResponse({response});
-        setComment({title: '', content: '', submit: false})
+        setCommentRetrieveAll({submit: false, response});
       })
       .catch(response=>{
         console.log("*************************************")
         console.log('there was an error: ', response)
         console.log("*************************************")
-        setResponse({response});
-        setComment({title: '', content: '', submit: false})
+        setCommentRetrieveAll({submit: false, response});
       })
     }
-  }, [comment])
+  }, [commentretrieveall])
   
   return(
     <div></div>

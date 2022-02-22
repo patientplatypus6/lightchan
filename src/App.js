@@ -3,13 +3,16 @@ import './App.css';
 import Main from "./pages/main"
 import Biography from "./pages/biography"
 import Projects from "./pages/projects"
+import Thread from './pages/thread'
 
 import {
   Routes, 
   Route, 
   useNavigate,
-  useRoutes
+  useRoutes, 
+  useParams, 
 } from "react-router-dom";
+import { useEffect } from 'react';
 
 function App() {
 
@@ -17,38 +20,16 @@ function App() {
 
   async function handleNavigate(routename) {
     console.log("value of routename: " + routename)
-    navigate("../"+routename, { replace: true });
-  }
-
-  function navbar(){
-    return(
-      <div className='navbar'>
-        <div
-        className='navbutton'
-        onClick={() => handleNavigate('/')}>
-          Main
-        </div>
-        <div
-        className='navbutton'
-        onClick={() => handleNavigate('projects')}>
-          Projects
-        </div>
-        <div
-        className='navbutton'
-        onClick={() => handleNavigate('biography')}>
-          Biography
-        </div>
-      </div>
-    )
+    navigate("../"+routename);
   }
 
   return (
     <div className='mainbackground'>
-      {navbar()}
       <Routes>
-        <Route path="/" element={<Main />} />
+        <Route path="/" element={<Main handleNavigate={handleNavigate} />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/biography" element={<Biography />} />
+        <Route path="/thread/:threadnumber" element={<Thread />} />
       </Routes>
     </div>
   );
