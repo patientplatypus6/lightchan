@@ -4,6 +4,8 @@ import Main from "./pages/main"
 import Biography from "./pages/biography"
 import Projects from "./pages/projects"
 import Thread from './pages/thread'
+import Api from './api/api'
+
 
 import {
   Routes, 
@@ -31,6 +33,7 @@ function App() {
         <Route path="/biography" element={<Biography />} />
         <Route path="/thread/:threadnumber" element={<Thread />} />
       </Routes>
+      <Api/>
     </div>
   );
 }

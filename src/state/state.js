@@ -8,6 +8,39 @@ import {
   useRecoilValue,
 } from 'recoil';
 
+
+
+//postreply / setPostReply
+const replyPostState = atom({  
+  key: 'replyPostState',
+  default: {title: "", content: "", comment_id: "", submit: false}
+})
+
+//getreply / setGetReply
+const replyGetState = atom({  
+  key: 'replyGetState',
+  default: {id: "", submit: false}
+})
+
+//replygetresponse / setReplyGetResponse
+const replyGetResponse = atom({  
+  key: 'replyGetResponse',
+  default: {response: {}}
+})
+
+//don't end up using
+//replypostresponse / setReplyPostResponse
+const replyPostResponse = atom({  
+  key: 'replyPostResponse',
+  default: {response: {}}
+})
+
+//commentretrieveall / setCommentRetrieveAll
+const retrieveAllRepliesByID = atom({  
+  key: 'retrieveAllRepliesByID',
+  default: {submit: false, comment_id: "", response: {}}
+})
+
 //postcomment / setPostComment
 const commentPostState = atom({  
   key: 'commentPostState',
@@ -39,6 +72,11 @@ const retrieveAllComments = atom({
 })
 
 export {
+  replyGetState, 
+  replyGetResponse,
+  replyPostState,
+  replyPostResponse,
+  retrieveAllRepliesByID,
   commentPostState, 
   commentPostResponse,   
   commentGetState, 

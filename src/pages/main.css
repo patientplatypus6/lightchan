@@ -90,3 +90,25 @@
   color: rgb(0, 0, 0);
   background: rgb(145, 184, 145); 
 }
+
+.replycontainer{
+  background: rgb(76, 129, 76);
+  color: black;
+  display: inline-block;
+  width: 40vw;
+  margin: 10px;
+  border: 2px solid grey;
+  text-align: right;
+}
+
+.replytitlebar{
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.replycontentbox{
+  padding: 5px;
+  color: rgb(0, 0, 0);
+  background: rgb(79, 105, 79); 
+}
