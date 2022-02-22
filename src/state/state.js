@@ -8,22 +8,14 @@ import {
   useRecoilValue,
 } from 'recoil';
 
-//examples from https://recoiljs.org/docs/introduction/getting-started  
+const commentState = atom({  
+  key: 'commentState',
+  default: {title: "", content: "", submit: false}
+})
 
-const textState = atom({
-  key: 'textState', // unique ID (with respect to other atoms/selectors)
-  default: '', // default value (aka initial value)
-});
+const commentPostResponse = atom({  
+  key: 'commentPostResponse',
+  default: {response: {}}
+})
 
-const charCountState = selector({
-  key: 'charCountState', // unique ID (with respect to other atoms/selectors)
-  get: ({get}) => {
-    const text = get(textState);
-
-    return text.length;
-  },
-});
-
-
-
-export {textState, charCountState}
+export {commentState, commentPostResponse}

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   RecoilRoot,
   atom,
@@ -8,50 +8,64 @@ import {
   useRecoilValue,
 } from 'recoil';
 // import {schema} from '../api/api'
-import { testPost } from '../api/fetch';
+import Api from '../api/api';
 
 import {
-  textState, charCountState
+  commentPostResponse,
+  commentState
 } from '../state/state'
 
-function CharacterCounter(){
-  const [text, setText] = useRecoilState(textState);
-  const onChange = (event) => {
-    setText(event.target.value);
+function Comment(){
+
+  const [comment, setComment] = useRecoilState(commentState);
+  const [response, setResponse] = useRecoilState(commentPostResponse);
+  // const submit = useRecoilValue(submitComment);
+
+  useEffect(()=>{
+    console.log("useEffect of Comment and comment: ", comment)
+  }, [comment])
+
+  useEffect(()=>{
+    console.log("useEffect of Comment and comment post response: ", response)
+  }, [response])
+
+
+  const onChangeComment = (event, name) => {
+    console.log("inside onChangeComment and value of event: ", event)
+    console.log("inside onChangeComment and value of name: ", name)
+    setComment({
+      title: name=="title"?event.target.value:comment.title, 
+      content: name=="content"?event.target.value:comment.content,
+      submit: name=="submit"?true:false
+    })
+
   };
 
+
   return(
     <div>
-      <input type="text" value={text} onChange={onChange} />
-      <br />
-      Echo: {text}
+      <div>
+        Comment: 
+      </div>
+      <div>
+        <input type="text" value={comment.title} onChange={(e)=>{onChangeComment(e, 'title')}}></input>
+        <br/>
+        <textarea type="text" value={comment.content} onChange={(e)=>{onChangeComment(e, 'content')}} />
+        <br/>
+        <div 
+          style={{
+            display: 'inline-block',
+            paddingTop: '5px',
+            cursor: 'pointer', background: 'blue', color: 'white', padding: '5px'}}
+          onClick={()=>{onChangeComment("", "submit")}}>
+          SUBMIT
+        </div>
+        <Api name="comment"/>
+      </div>
     </div>
   )
 
 }
-
-function TestFetch(){
-
-  testPost();
-
-  return(
-    <div>
-      Inside the test of the fetch api.
-    </div>
-  )
-}
-
-//may implement later (why not just put in recoil?)
-// function GraphSchema(){
-//   return(
-//     <div>
-//       The value of the returning schema is - 
-//       <div>
-//         {JSON.stringify(schema)}
-//       </div>
-//     </div>
-//   )
-// }
 
 function Main() {
   return (
@@ -60,10 +74,8 @@ function Main() {
         This is the main page.
       </div>
       <RecoilRoot>
-        <CharacterCounter/> 
+        <Comment/> 
       </RecoilRoot>
-      {/* <GraphSchema></GraphSchema> */}
-      <TestFetch></TestFetch>
     </div>
   );
 }
