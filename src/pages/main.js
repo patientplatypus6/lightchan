@@ -20,12 +20,7 @@ import {
 
 function CommentList(props){
 
-  const [getcomment, setGetComment] = useRecoilState(commentGetState);
-  const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
-  const [postcomment, setPostComment] = useRecoilState(commentPostState);
-  const [commentpostresponse, setCommentPostResponse] = useRecoilState(commentPostResponse);
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
-
   const [dataArray, setDataArray] = useState([])
 
   useEffect(()=>{
@@ -93,7 +88,6 @@ function Comment(){
       />
     </div>
   )
-
 }
 
 function Main(props) {

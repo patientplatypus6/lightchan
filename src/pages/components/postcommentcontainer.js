@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import '../main.css'
-
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
+import { uploadFile } from '../../state/state';
 
 function PostCommentContainer({submitComment, comment}){
 
+  const [uploadfile, setUploadFile] = useRecoilState(uploadFile);
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
 
@@ -25,11 +33,49 @@ function PostCommentContainer({submitComment, comment}){
     submitComment({title, content, submit: true})
   }
 
+  // var formData = new FormData();
+  // var imagefile = document.querySelector('#file');
+  // formData.append("image", imagefile.files[0]);
+  // axios.post('upload_file', formData, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data'
+  //     }
+  // })
+
+  // const obj = {
+  //   hello: "world"
+  // };
+  // const json = JSON.stringify(obj);
+  // const blob = new Blob([json], {
+  //   type: 'application/json'
+  // });
+  // const data = new FormData();
+  // data.append("document", blob);
+  // axios({
+  //   method: 'post',
+  //   url: '/sample',
+  //   data: data,
+  // })
+
+  // const uploadFiles = atom({
+  //   key: 'uploadFiles',
+  //   default: {files: []}
+  // })
+
   return(
     <div className='submitcommentcontainer'>
       <input className='inputval' type="text" value={title} onChange={(e)=>{setTitle(e.target.value)}}></input>
       <br/>
       <textarea className='textval' type="text" value={content} onChange={(e)=>{setContent(e.target.value)}} />
+      <br/>
+      <input 
+        type='file' 
+        style={{background: 'blue', color: 'black', padding:'5px'}}
+        onChange={(e)=>{
+          console.log('value of e.target.files;', e.target.files[0])
+          setUploadFile(e.target.files[0])
+        }}
+      ></input>
       <br/>
       <div 
         className='submitcommentbutton'

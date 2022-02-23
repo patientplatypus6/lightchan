@@ -1,14 +1,41 @@
 from cmath import exp
+import doctest
 from unittest import expectedFailure
 from django.http import HttpResponse
 from django.http.response import JsonResponse
+import multipart
 
 import json
+from requests_toolbelt.multipart import decoder
 from lightone.models import *
 from . import utilities
 
 def index(request):
   return HttpResponse("Hello light one.")
+
+def simple_app(request):
+    ret = []
+
+    # The following two callbacks just append the name to the return value.
+    def on_field(field):
+        ret.append("Parsed field named: %s" % (field.field_name,))
+
+    def on_file(file):
+        ret.append("Parsed file named: %s" % (file.field_name,))
+
+    # Create headers object.  We need to convert from WSGI to the actual
+    # name of the header, since this library does not assume that you are
+    # using WSGI.
+    headers = {'Content-Type': request['CONTENT_TYPE']}
+    if 'HTTP_X_FILE_NAME' in request:
+        headers['X-File-Name'] = request['HTTP_X_FILE_NAME']
+    if 'CONTENT_LENGTH' in request:
+        headers['Content-Length'] = request['CONTENT_LENGTH']
+
+    # Parse the form.
+    multipart.parse_form(headers, request['wsgi.input'], on_field, on_file)
+
+    return ret
 
 def reply(request, reply_id):
   print("inside reply")
@@ -123,9 +150,52 @@ def comment(request, comment_id):
   elif request.method == 'POST':
 
     print("inside POST")
-    print("value of request.body %s", json.loads(request.body))
+    # print("value of request.body %s", json.loads(request.body))
+    print("value of request.body %s", request.body)
+    
+    # ret = simple_app(request)
+    # print('value of ret %s, ', ret)
+    
+    # print("value of request.body %s", request.body.form['title'])
+    # print("***********************************************************")
+    # print('value of params: %s', request.POST.get("title"))
+    # print("***********************************************************")
+    
+    # print("value of request: ", request.POST.get)
+    
+    # jsonbody = json.loads(request.body)
 
-    jsonbody = json.loads(request.body)
+    # testEnrollResponse = requests.post(...)
+    # multipart_data = decoder.MultipartDecoder.from_response(request.body)
+
+    # for part in multipart_data.parts:
+    #     print(part.content)  # Alternatively, part.text if you want unicode
+    #     print(part.headers)
+    
+    # print("value of request.POST(...): ", request.POST(...))
+    
+    # testEnrollResponse = request.POST(...)
+    # multipart_data = decoder.MultipartDecoder.from_response(testEnrollResponse)
+
+    # for part in multipart_data.parts:
+    #     print(part.content)  # Alternatively, part.text if you want unicode
+    #     print(part.headers)
+
+    print("value of request.FILES ", request.FILES)
+    print("value of request.FILES['image'] ", request.FILES['image'])
+    # print("value of request.FILES['document'] ", json.dumps(request.FILES['document']))
+
+    docstring = request.FILES.get('document').read()
+    
+    print('docstring %s,', docstring);
+    
+    docjson = json.loads(docstring)
+    
+    print("docjson %s, ", docjson['title']);
+    
+    # print("value of request.FILES['document'] ", type(request.FILES['document']))    
+    # print("value of request.POST.get('document') ", request.POST.get("document"))
+    # print("value of request.POST.get('document') ", request.POST.get("document"))
 
     try:
       comment = Comment.objects.create(title=jsonbody['title'], content=jsonbody['content'])

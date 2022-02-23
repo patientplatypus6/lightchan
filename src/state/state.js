@@ -8,7 +8,11 @@ import {
   useRecoilValue,
 } from 'recoil';
 
-
+//uploadfile / setUploadFile
+const uploadFile = atom({
+  key: 'uploadFile',
+  default: null
+})
 
 //postreply / setPostReply
 const replyPostState = atom({  
@@ -72,6 +76,7 @@ const retrieveAllComments = atom({
 })
 
 export {
+  uploadFile,
   replyGetState, 
   replyGetResponse,
   replyPostState,

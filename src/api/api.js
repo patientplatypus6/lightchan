@@ -12,6 +12,7 @@ import axios from 'axios';
 import { testPost } from '../api/fetch';
 
 import {
+  uploadFile,
   replyGetState, 
   replyPostState,
   replyGetResponse, 
@@ -23,6 +24,7 @@ import {
 
 function Api(){
 
+  const [uploadfile, setUploadFile] = useRecoilState(uploadFile);
   const [getreply, setGetReply] = useRecoilState(replyGetState);
   const [postreply, setPostReply] = useRecoilState(replyPostState);
   const [replypostresponse, setReplyPostResponse] = useRecoilState(replyPostResponse);
@@ -34,26 +36,44 @@ function Api(){
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
   const [replyretrieveallbyid, setReplyRetrieveAllByID] = useRecoilState(retrieveAllRepliesByID);
 
+  const createUploadForm = () => {
+
+    console.log('value of uploadFile: ', uploadfile)
+
+    var formData = new FormData();
+    formData.append("image", uploadfile)
+    const obj = {title: postcomment.title, content: postcomment.content}
+    const json = JSON.stringify(obj);
+    const blob = new Blob([json], {
+      type: 'application/json'
+    });
+    formData.append("document", blob);
+    return formData
+  }
 
   useEffect(()=>{
-    // console.log("inside Api and value of name: ", name)
-    // console.log("useEffect of Api and value of comment: ", comment)
+    var formdata = createUploadForm()
     if(postcomment.submit){
-      axios.post(
-        "http://localhost:8000/lightone/comment/1/", 
-        {title: postcomment.title, content: postcomment.content}
-      )
+      // axios.post(
+      //   "http://localhost:8000/lightone/comment/1/", 
+      //   {title: postcomment.title, content: postcomment.content}
+      // )
+      axios({
+        method: 'post', 
+        url: "http://localhost:8000/lightone/comment/1/", 
+        data: formdata
+      })
       .then(response=>{
-        // console.log("*************************************")
-        // console.log("here is the response: ", response)
-        // console.log("*************************************")
+        console.log("*************************************")
+        console.log("here is the response: ", response)
+        console.log("*************************************")
         setCommentPostResponse({response});
         setPostComment({title: '', content: '', submit: false})
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
+        console.log("*************************************")
+        console.log('there was an error: ', response)
+        console.log("*************************************")
         setCommentPostResponse({response});
         setPostComment({title: '', content: '', submit: false})
       })
