@@ -36,14 +36,19 @@ function Api(){
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
   const [replyretrieveallbyid, setReplyRetrieveAllByID] = useRecoilState(retrieveAllRepliesByID);
 
-  const createUploadForm = () => {
+  const createUploadForm = (kind) => {
 
     console.log('value of uploadFile: ', uploadfile)
 
     var formData = new FormData();
     formData.append("image", uploadfile)
     setUploadFile(null)
-    const obj = {title: postcomment.title, content: postcomment.content}
+    var obj = {}
+    if(kind=='comment'){
+      obj = {title: postcomment.title, content: postcomment.content}
+    }else if(kind=='reply'){
+      obj = {title: postreply.title, content: postreply.content, comment_id: postreply.comment_id}
+    }
     const json = JSON.stringify(obj);
     const blob = new Blob([json], {
       type: 'application/json'
@@ -53,12 +58,8 @@ function Api(){
   }
 
   useEffect(()=>{
-    var formdata = createUploadForm()
     if(postcomment.submit){
-      // axios.post(
-      //   "http://localhost:8000/lightone/comment/1/", 
-      //   {title: postcomment.title, content: postcomment.content}
-      // )
+      var formdata = createUploadForm('comment')
       axios({
         method: 'post', 
         url: "http://localhost:8000/lightone/comment/1/", 
@@ -127,24 +128,30 @@ function Api(){
 
   useEffect(()=>{
     if(postreply.submit){
-      var comment_id = postreply.comment_id
-      axios.post(
-        "http://localhost:8000/lightone/reply/"+postreply.comment_id+"/", 
-        {title: postreply.title, content: postreply.content}
-      )
+      var formdata = createUploadForm('reply')
+      // var comment_id = postreply.comment_id
+      // axios.post(
+      //   "http://localhost:8000/lightone/reply/"+postreply.comment_id+"/", 
+      //   {title: postreply.title, content: postreply.content}
+      // )
+      axios({
+        method: 'post', 
+        url: "http://localhost:8000/lightone/reply/"+postreply.comment_id+"/", 
+        data: formdata
+      })
       .then(response=>{
         console.log("*************************************")
         console.log("here is the response: ", response)
         console.log("*************************************")
         setPostReply({title: "", content: "", comment_id: "", submit:false})
-        setReplyRetrieveAllByID({submit: false, comment_id, response})
+        setReplyRetrieveAllByID({submit: false, comment_id: postreply.comment_id, response})
       })
       .catch(response=>{
         console.log("*************************************")
         console.log('there was an error: ', response)
         console.log("*************************************")
         setPostReply({title: "", content: "", comment_id: "", submit:false})
-        setReplyRetrieveAllByID({submit: false, comment_id, response})
+        setReplyRetrieveAllByID({submit: false, comment_id: postreply.comment_id, response})
       })
     }
   }, [postreply])

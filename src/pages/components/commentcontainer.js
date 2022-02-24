@@ -15,8 +15,10 @@ function CommentContainer({comment, handleNavigate, showthread}){
       }}>view thread</span>:<span/>}
       </div>
       <div className='commentcontentbox'>
-        {comment.file_name!=""&&comment.file_name!=undefined?<img src={"http://localhost:8000/static/"+comment.file_name}/>:<div/>}
-        {comment.content}
+        {comment.file_name!=""&&comment.file_name!=undefined?<img src={"http://localhost:8000/static/"+comment.file_name} className='commentimage'/>:<div/>}
+        <div className='commentcontent'>
+          {comment.content}
+        </div>
       </div>
     </div>
   )

@@ -15,30 +15,6 @@ from . import utilities
 def index(request):
   return HttpResponse("Hello light one.")
 
-def simple_app(request):
-    ret = []
-
-    # The following two callbacks just append the name to the return value.
-    def on_field(field):
-        ret.append("Parsed field named: %s" % (field.field_name,))
-
-    def on_file(file):
-        ret.append("Parsed file named: %s" % (file.field_name,))
-
-    # Create headers object.  We need to convert from WSGI to the actual
-    # name of the header, since this library does not assume that you are
-    # using WSGI.
-    headers = {'Content-Type': request['CONTENT_TYPE']}
-    if 'HTTP_X_FILE_NAME' in request:
-        headers['X-File-Name'] = request['HTTP_X_FILE_NAME']
-    if 'CONTENT_LENGTH' in request:
-        headers['Content-Length'] = request['CONTENT_LENGTH']
-
-    # Parse the form.
-    multipart.parse_form(headers, request['wsgi.input'], on_field, on_file)
-
-    return ret
-
 def reply(request, reply_id):
   print("inside reply")
   print("value of request %s", 
@@ -46,25 +22,41 @@ def reply(request, reply_id):
   util = utilities.Utilites()
   if request.method=="POST":
     all_comments = Comment.objects.all()
-    jsonbody = json.loads(request.body)
+    # jsonbody = json.loads(request.body)
     parentuuid = ""
     for comment in all_comments: 
        if str(util.filterid(comment.id)) == str(reply_id):
         parentuuid = comment.id
 
     print('value of parentuuid: %s', parentuuid)
+    
+    docstring = request.FILES.get('document').read()
+    docjson = json.loads(docstring)
+    title = docjson['title']
+    content = docjson['content']
+    _, file_extension = os.path.splitext(request.FILES.get('image').name)
+    file_name = str(util.getdatetime())+file_extension
+    file_path = "../static/"+file_name
+    image_path = os.path.join(os.path.dirname(__file__), file_path)
+    
+    with open(image_path, "wb") as f:
+        f.write(request.FILES.get('image').file.read())
 
     try:
-      comment = Reply.objects.create(title=jsonbody['title'], content=jsonbody['content'], owner_id=parentuuid)
+      reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
       try: 
         returnreplies = []
         replies = Reply.objects.all().filter(owner_id=parentuuid).order_by("-created_at")
         for reply in replies: 
+          file_name = ""
+          if len(reply.file_name)>0:
+            file_name = reply.file_name
           returnreplies.append({
             'id': reply.id, 
             'title': reply.title,
             'content': reply.content,
-            'created_at': reply.created_at
+            'created_at': reply.created_at, 
+            'file_name': file_name
           })
         return util.jsonresponse(returnreplies)   
       except:
@@ -93,11 +85,15 @@ def replies(request, reply_id):
           parentuuid = comment.id
       replies = Reply.objects.all().filter(owner_id=parentuuid).order_by("-created_at")
       for reply in replies: 
+        file_name = ""
+        if len(reply.file_name)>0:
+          file_name = reply.file_name
         returnreplies.append({
           'id': reply.id, 
           'title': reply.title,
           'content': reply.content,
-          'created_at': reply.created_at
+          'created_at': reply.created_at,
+          'file_name': file_name
         })
       return util.jsonresponse(returnreplies)   
     except:

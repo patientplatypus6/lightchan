@@ -12,7 +12,10 @@ function ReplyContainer({reply}){
       <span style={{marginLeft: '10px'}}>{reply.created_at}</span><span style={{marginLeft: '10px'}}>{reply.title}</span>
       </div>
       <div className='replycontentbox'>
-        {reply.content}
+        {reply.file_name!=""&&reply.file_name!=undefined?<img src={"http://localhost:8000/static/"+reply.file_name} className='replyimage'/>:<div/>}
+        <div className='replycontent'>
+          {reply.content}
+        </div>
       </div>
     </div>
   )
