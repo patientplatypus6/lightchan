@@ -1,11 +1,13 @@
 from cmath import exp
 import doctest
+from fileinput import filename
 from unittest import expectedFailure
 from django.http import HttpResponse
 from django.http.response import JsonResponse
+from jinja2 import Undefined
 import multipart
-
-import json
+import json    
+import os
 from requests_toolbelt.multipart import decoder
 from lightone.models import *
 from . import utilities
@@ -115,11 +117,15 @@ def comments(request):
     all_comments = Comment.objects.all()
     ordered_comments = all_comments.order_by("-created_at")
     for comment in ordered_comments:
+      file_name = ""
+      if len(comment.file_name)>0:
+        file_name = comment.file_name
       returncomments.append({
         "id": util.filterid(comment.id),
         "title": comment.title,
         "content": comment.content,
-        "created_at": comment.created_at
+        "created_at": comment.created_at,
+        "file_name": file_name
       })
     return util.jsonresponse(returncomments)  
   
@@ -139,66 +145,37 @@ def comment(request, comment_id):
     all_comments = Comment.objects.all()
     for comment in all_comments: 
        if str(util.filterid(comment.id)) == str(comment_id):
+         file_name = ""
+         if len(comment.file_name)>0:
+           file_name = comment.file_name
          return util.jsonresponse({
            "id": comment_id,
            "title": comment.title,
            "content": comment.content, 
-           "created_at": comment.created_at
+           "created_at": comment.created_at, 
+           "file_name": file_name
          })
     return util.jsonresponse({"exception": "comment not found"})
 
   elif request.method == 'POST':
 
-    print("inside POST")
-    # print("value of request.body %s", json.loads(request.body))
-    print("value of request.body %s", request.body)
-    
-    # ret = simple_app(request)
-    # print('value of ret %s, ', ret)
-    
-    # print("value of request.body %s", request.body.form['title'])
-    # print("***********************************************************")
-    # print('value of params: %s', request.POST.get("title"))
-    # print("***********************************************************")
-    
-    # print("value of request: ", request.POST.get)
-    
-    # jsonbody = json.loads(request.body)
-
-    # testEnrollResponse = requests.post(...)
-    # multipart_data = decoder.MultipartDecoder.from_response(request.body)
-
-    # for part in multipart_data.parts:
-    #     print(part.content)  # Alternatively, part.text if you want unicode
-    #     print(part.headers)
-    
-    # print("value of request.POST(...): ", request.POST(...))
-    
-    # testEnrollResponse = request.POST(...)
-    # multipart_data = decoder.MultipartDecoder.from_response(testEnrollResponse)
-
-    # for part in multipart_data.parts:
-    #     print(part.content)  # Alternatively, part.text if you want unicode
-    #     print(part.headers)
-
-    print("value of request.FILES ", request.FILES)
-    print("value of request.FILES['image'] ", request.FILES['image'])
-    # print("value of request.FILES['document'] ", json.dumps(request.FILES['document']))
+    util = utilities.Utilites()
 
     docstring = request.FILES.get('document').read()
-    
-    print('docstring %s,', docstring);
-    
     docjson = json.loads(docstring)
+    title = docjson['title']
+    content = docjson['content']
+    _, file_extension = os.path.splitext(request.FILES.get('image').name)
+    file_name = str(util.getdatetime())+file_extension
+    file_path = "../static/"+file_name
+    image_path = os.path.join(os.path.dirname(__file__), file_path)
     
-    print("docjson %s, ", docjson['title']);
-    
-    # print("value of request.FILES['document'] ", type(request.FILES['document']))    
-    # print("value of request.POST.get('document') ", request.POST.get("document"))
-    # print("value of request.POST.get('document') ", request.POST.get("document"))
+    with open(image_path, "wb") as f:
+        f.write(request.FILES.get('image').file.read())
 
     try:
-      comment = Comment.objects.create(title=jsonbody['title'], content=jsonbody['content'])
+      comment = Comment.objects.create(title=title, content=content, file_name=file_name)
+      print("value of comment: %s", str(comment))
       return util.jsonresponse({
           "formid": util.filterid(comment.id)
         })

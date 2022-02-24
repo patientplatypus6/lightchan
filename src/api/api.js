@@ -42,6 +42,7 @@ function Api(){
 
     var formData = new FormData();
     formData.append("image", uploadfile)
+    setUploadFile(null)
     const obj = {title: postcomment.title, content: postcomment.content}
     const json = JSON.stringify(obj);
     const blob = new Blob([json], {
