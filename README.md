@@ -25,6 +25,6 @@ Here is a front page with comments.
 
 A thread can be replied to.
 
-![comment thread](./image.png "Add Picture Functionality")
+![comment thread](./commentimage.png "Add Picture Functionality")
 
 Can now add and display images for comments (formatting forthcoming)
