@@ -31,4 +31,4 @@ Can now add and display images for comments (formatting forthcoming)
 
 ![formattedpics](./formattedpics.png "Add Formatted Pics")
 
-Pic handling formmatted and replies now work
+Pic handling formatted and replies now work
