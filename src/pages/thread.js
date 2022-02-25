@@ -52,7 +52,7 @@ function ReplyList(){
             <br/>
           </div>  
         )
-      }):<div>Some error</div>}
+      }):<div/>}
     </div>
   )
 
@@ -75,20 +75,15 @@ function Thread(){
   const location = useLocation();
 
   useEffect(()=>{
-    console.log("*****************")
-    console.log("replyretrieveallbyid: ", replyretrieveallbyid)
-    console.log("*****************")
-  }, [replyretrieveallbyid])
-
-  useEffect(()=>{
+    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     console.log('inside commentgetresponse and value of response: ', commentgetresponse)
+    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    console.log('commentgetresponse.comment.fields', commentgetresponse.comment.fields)
   }, [commentgetresponse])
 
   useEffect(()=>{
-    console.log('value of location: ', location)
-    setThreadnum(location.pathname.replace("/thread/", ""))
+    setThreadnum(location.pathname.replace('/thread/', ''))
     setGetComment({id: location.pathname.replace("/thread/", ""), submit: true})
-    setReplyRetrieveAllByID({comment_id: location.pathname.replace("/thread/", ""), response: {}, submit: true})
   }, [])
 
   useEffect(()=>{
@@ -107,16 +102,23 @@ function Thread(){
       <br/>
       ~~~ Comment ~~~
       <br/>
-      {commentgetresponse.response.data!=undefined?
-        <CommentContainer
-          showthread={false}
-          handleNavigate={()=>{}}
-          comment={commentgetresponse.response.data}
-        />:<div/>}
+      {commentgetresponse.comment.length!=0&&commentgetresponse.comment.fields!=undefined?
+         <CommentContainer
+           showthread={false}
+           handleNavigate={()=>{}}
+           comment={commentgetresponse.comment.fields}
+         />:<div/>
+      }
       <br/>
       ~~~ Replies ~~~
       <br/>
-      <ReplyList/>
+      {commentgetresponse.replies!=[]?
+        <ReplyList 
+          replies={
+            commentgetresponse.replies
+          }
+        />
+      :<div/>}
     </div>
   )
 

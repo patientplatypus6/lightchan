@@ -12,4 +12,4 @@ class Utilites():
   def jsonresponse(self, obj):
     return JsonResponse(obj, safe=False, json_dumps_params={'ensure_ascii': False})
   def filterid(self, id):
-    return re.sub('[abcdef-]', '', str(id))
+    return re.sub('[abcdef()-]', '', str(id))

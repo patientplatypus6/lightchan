@@ -9,8 +9,6 @@ import {
 } from 'recoil';
 import { uploadFile } from '../../state/state';
 
-
-
 function PostReplyContainer({submitReply, reply}){
 
   const [uploadfile, setUploadFile] = useRecoilState(uploadFile);

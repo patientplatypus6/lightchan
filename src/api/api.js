@@ -19,7 +19,7 @@ import {
   replyPostResponse,
   retrieveAllRepliesByID,
   commentGetState, 
-  commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
+  commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments, voteField
 } from '../state/state'
 
 function Api(){
@@ -90,17 +90,17 @@ function Api(){
         "http://localhost:8000/lightone/comment/"+getcomment.id+"/"
       )
       .then(response=>{
-        console.log("*************************************")
-        console.log("here is the response: ", response)
-        console.log("*************************************")
-        setCommentGetResponse({response});
+        setCommentGetResponse({
+          comment: response.data.comment, 
+          replies: response.data.replies
+        });
         setGetComment({id: '', submit: false})
       })
       .catch(response=>{
         console.log("*************************************")
         console.log('there was an error: ', response)
         console.log("*************************************")
-        setCommentGetResponse({response});
+        setCommentGetResponse({comment: {}, replies: []});
         setGetComment({id: '', submit: false})  
       })
     }
@@ -129,11 +129,6 @@ function Api(){
   useEffect(()=>{
     if(postreply.submit){
       var formdata = createUploadForm('reply')
-      // var comment_id = postreply.comment_id
-      // axios.post(
-      //   "http://localhost:8000/lightone/reply/"+postreply.comment_id+"/", 
-      //   {title: postreply.title, content: postreply.content}
-      // )
       axios({
         method: 'post', 
         url: "http://localhost:8000/lightone/reply/"+postreply.comment_id+"/", 
@@ -176,6 +171,33 @@ function Api(){
       })
     }
   }, [replyretrieveallbyid])
+
+  useEffect(()=>{
+    if(voteField.submit){
+      if(voteField.comment==true){
+        var url = "http://localhost:8000/lightone/comment/"+voteField.id+"/"
+      }else if(voteField.reply==true){
+        var url = "http://localhost:8000/lightone/reply/"+voteField.id+"/"
+      }
+      axios.put(
+        url,
+        {
+          upvote: voteField.upvote,
+          downvote: voteField.downvote
+        }
+      )
+      .then(response=>{
+        console.log("*************************************")
+        console.log("here is the response: ", response)
+        console.log("*************************************")
+      })
+      .catch(response=>{
+        console.log("*************************************")
+        console.log('there was an error: ', response)
+        console.log("*************************************")
+      })
+    }
+  }, [voteField])
   
   return(
     <div></div>

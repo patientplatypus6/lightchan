@@ -9,6 +9,20 @@ import {
 } from 'recoil';
 
 //uploadfile / setUploadFile
+//vote / setVote
+const voteField = atom({
+  key: 'vote',
+  default: {
+    upvote: false, 
+    downvote: false, 
+    comment: false, 
+    reply: false,
+    id: "",
+    submit: false
+  }
+})
+
+//uploadfile / setUploadFile
 const uploadFile = atom({
   key: 'uploadFile',
   default: null
@@ -59,8 +73,8 @@ const commentGetState = atom({
 
 //commentgetresponse / setCommentGetResponse
 const commentGetResponse = atom({  
-  key: 'commentPostResponse',
-  default: {response: {}}
+  key: 'commentGetResponse',
+  default: {comment: {}, replies: []}
 })
 
 //commentpostresponse / setCommentPostResponse
@@ -76,6 +90,7 @@ const retrieveAllComments = atom({
 })
 
 export {
+  voteField,
   uploadFile,
   replyGetState, 
   replyGetResponse,

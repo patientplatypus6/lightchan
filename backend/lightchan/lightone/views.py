@@ -1,7 +1,3 @@
-from cmath import exp
-import doctest
-from fileinput import filename
-from unittest import expectedFailure
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 from jinja2 import Undefined
@@ -10,7 +6,11 @@ import json
 import os
 from requests_toolbelt.multipart import decoder
 from lightone.models import *
+from django.db import transaction
 from . import utilities
+
+from django.core import serializers
+
 
 def index(request):
   return HttpResponse("Hello light one.")
@@ -25,7 +25,7 @@ def reply(request, reply_id):
     # jsonbody = json.loads(request.body)
     parentuuid = ""
     for comment in all_comments: 
-       if str(util.filterid(comment.id)) == str(reply_id):
+       if comment.clean_id == str(reply_id):
         parentuuid = comment.id
 
     print('value of parentuuid: %s', parentuuid)
@@ -44,6 +44,8 @@ def reply(request, reply_id):
 
     try:
       reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
+      reply.clean_id = int(util.filterid(str(reply_id)))
+      reply.save()
       try: 
         returnreplies = []
         replies = Reply.objects.all().filter(owner_id=parentuuid).order_by("-created_at")
@@ -56,6 +58,7 @@ def reply(request, reply_id):
             'title': reply.title,
             'content': reply.content,
             'created_at': reply.created_at, 
+            'clean_id': reply.clean_id,
             'file_name': file_name
           })
         return util.jsonresponse(returnreplies)   
@@ -70,20 +73,14 @@ def reply(request, reply_id):
     except:
       return util.jsonresponse({"exception": "there was some exception"}) 
 
-def replies(request, reply_id):
-  print("inside replies")
-  print("value of request %s", 
-  request)
+def replies(request, comment_id):
   util = utilities.Utilites()
   if request.method=="GET":
     try: 
       returnreplies = []
-      parentuuid = ""
-      all_comments = Comment.objects.all()
-      for comment in all_comments: 
-        if str(util.filterid(comment.id)) == str(reply_id):
-          parentuuid = comment.id
-      replies = Reply.objects.all().filter(owner_id=parentuuid).order_by("-created_at")
+      parent_comment = Comment.objects.get(clean_id=comment_id)
+      replies = Reply.objects.all().filter(owner_id=parent_comment.id).order_by("-created_at")
+
       for reply in replies: 
         file_name = ""
         if len(reply.file_name)>0:
@@ -133,25 +130,31 @@ def comment(request, comment_id):
   print("value of request %s", 
   request)
   util = utilities.Utilites()
+  
+  if request.method == 'PUT':
+    print('inside the PUT method for get')
 
   if request.method == 'GET':
+    
+    print("inside comment request.method is GET")
 
-    print("inside GET for comment")
+    parent_comment = Comment.objects.all().filter(clean_id=comment_id)
+    replies = Reply.objects.all().filter(owner_id=parent_comment[0].id)
+    parent_comment_data = json.loads(serializers.serialize('json', parent_comment))
+    replies_data = json.loads(serializers.serialize("json", replies))
 
-    all_comments = Comment.objects.all()
-    for comment in all_comments: 
-       if str(util.filterid(comment.id)) == str(comment_id):
-         file_name = ""
-         if len(comment.file_name)>0:
-           file_name = comment.file_name
-         return util.jsonresponse({
-           "id": comment_id,
-           "title": comment.title,
-           "content": comment.content, 
-           "created_at": comment.created_at, 
-           "file_name": file_name
-         })
-    return util.jsonresponse({"exception": "comment not found"})
+    parent_comment_data[0]['pk'] = 'PRIVATE'
+    for reply, key in replies_data:
+      replies_data[key]['pk'] = 'PRIVATE'
+    
+    return_data = {
+      "comment": parent_comment_data[0], 
+      "replies": replies_data
+    }
+    
+    print("value of return_data before response: %s", return_data)
+    
+    return util.jsonresponse(return_data)
 
   elif request.method == 'POST':
 
@@ -162,20 +165,26 @@ def comment(request, comment_id):
     title = docjson['title']
     content = docjson['content']
     _, file_extension = os.path.splitext(request.FILES.get('image').name)
-    file_name = str(util.getdatetime())+file_extension
-    file_path = "../static/"+file_name
-    image_path = os.path.join(os.path.dirname(__file__), file_path)
     
-    with open(image_path, "wb") as f:
-        f.write(request.FILES.get('image').file.read())
+    if file_extension=='.jpg' or file_extension=='.jpeg' or file_extension=='.gif' or file_extension=='.svg' or file_extension=='.png':
+    
+      file_name = str(util.getdatetime())+file_extension
+      file_path = "../static/"+file_name
+      image_path = os.path.join(os.path.dirname(__file__), file_path)
+    
+      with open(image_path, "wb") as f:
+          f.write(request.FILES.get('image').file.read())
 
-    try:
-      comment = Comment.objects.create(title=title, content=content, file_name=file_name)
-      print("value of comment: %s", str(comment))
-      return util.jsonresponse({
-          "formid": util.filterid(comment.id)
-        })
-    except:  
-      return util.jsonresponse({"exception": "there was some exception"})
+      try:
+        comment = Comment.objects.create(title=title, content=content, file_name=file_name)
+        comment.clean_id = int(util.filterid(str(comment.id)))
+        comment.save()
+        return util.jsonresponse({
+            "formid": util.filterid(comment.id)
+          })
+      except:  
+        return util.jsonresponse({"exception": "there was some exception"})
+    else: 
+      return util.jsonresponse({"exception": "file format not valid"})
 
   return JsonResponse({'comment_id': comment_id}, safe=False, json_dumps_params={'ensure_ascii': False})

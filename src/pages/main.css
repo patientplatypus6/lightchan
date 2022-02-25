@@ -16,11 +16,26 @@
   margin: 5px;
 }
 
+.arrowbutton{
+  display: inline-block;
+  background-color: rgb(40, 37, 247);
+  color: rgb(223, 220, 41);
+  height: 0.8rem;
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 0.7rem;
+  border-radius: 5px;
+  cursor: pointer;
+  /* border: 2px solid blue ; */
+  padding: 5px;  
+}
+
 .viewbutton{
   display: inline-block;
   background-color: rgb(128, 35, 12);
   color: rgb(223, 220, 41);
   font-weight: bold;
+  height: 0.8rem;
   margin-left: 5px;
   font-size: 0.7rem;
   border-radius: 5px;

@@ -33,35 +33,6 @@ function PostCommentContainer({submitComment, comment}){
     submitComment({title, content, submit: true})
   }
 
-  // var formData = new FormData();
-  // var imagefile = document.querySelector('#file');
-  // formData.append("image", imagefile.files[0]);
-  // axios.post('upload_file', formData, {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data'
-  //     }
-  // })
-
-  // const obj = {
-  //   hello: "world"
-  // };
-  // const json = JSON.stringify(obj);
-  // const blob = new Blob([json], {
-  //   type: 'application/json'
-  // });
-  // const data = new FormData();
-  // data.append("document", blob);
-  // axios({
-  //   method: 'post',
-  //   url: '/sample',
-  //   data: data,
-  // })
-
-  // const uploadFiles = atom({
-  //   key: 'uploadFiles',
-  //   default: {files: []}
-  // })
-
   return(
     <div className='submitcommentcontainer'>
       <input className='inputval' type="text" value={title} onChange={(e)=>{setTitle(e.target.value)}}></input>
