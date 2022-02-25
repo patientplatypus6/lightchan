@@ -12,90 +12,106 @@ from . import utilities
 from django.core import serializers
 
 
+def retrieve_comment_replies(comment_id):
+  parent_comment = Comment.objects.all().filter(clean_id=comment_id)
+  replies = Reply.objects.all().filter(owner_id=parent_comment[0].id).order_by("-created_at")
+  parent_comment_data = json.loads(serializers.serialize('json', parent_comment))
+  replies_data = json.loads(serializers.serialize("json", replies))
+
+  print('value of replies: %s', replies_data)
+
+  parent_comment_data[0]['pk'] = 'PRIVATE'
+  count = 0
+  for reply in replies_data:
+    replies_data[count]['pk'] = 'PRIVATE'
+    count+=1
+  
+  return_data = {
+    "comment": parent_comment_data[0], 
+    "replies": replies_data
+  }
+  
+  return return_data;
+
+def write_file(image_property):
+  util = utilities.Utilites()
+  _, file_extension = os.path.splitext(image_property.name)
+  file_name = str(util.getdatetime())+file_extension
+  file_path = "../static/"+file_name
+  image_path = os.path.join(os.path.dirname(__file__), file_path)
+  
+  with open(image_path, "wb") as f:
+      f.write(image_property.file.read())
+  return file_name
+
 def index(request):
   return HttpResponse("Hello light one.")
 
-def reply(request, reply_id):
+def reply(request, incoming_id):
   print("inside reply")
   print("value of request %s", 
   request)
   util = utilities.Utilites()
   if request.method=="POST":
+    
     all_comments = Comment.objects.all()
-    # jsonbody = json.loads(request.body)
     parentuuid = ""
     for comment in all_comments: 
-       if comment.clean_id == str(reply_id):
+       if comment.clean_id == str(incoming_id):
         parentuuid = comment.id
 
     print('value of parentuuid: %s', parentuuid)
     
-    docstring = request.FILES.get('document').read()
-    docjson = json.loads(docstring)
+    docjson = json.loads(request.FILES.get('document').read())
     title = docjson['title']
     content = docjson['content']
-    _, file_extension = os.path.splitext(request.FILES.get('image').name)
-    file_name = str(util.getdatetime())+file_extension
-    file_path = "../static/"+file_name
-    image_path = os.path.join(os.path.dirname(__file__), file_path)
     
-    with open(image_path, "wb") as f:
-        f.write(request.FILES.get('image').file.read())
+    file_name = write_file(request.FILES.get('image'))
 
     try:
       reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
-      reply.clean_id = int(util.filterid(str(reply_id)))
+      reply.clean_id = int(util.filterid(str(incoming_id)))
       reply.save()
       try: 
-        returnreplies = []
-        replies = Reply.objects.all().filter(owner_id=parentuuid).order_by("-created_at")
-        for reply in replies: 
-          file_name = ""
-          if len(reply.file_name)>0:
-            file_name = reply.file_name
-          returnreplies.append({
-            'id': reply.id, 
-            'title': reply.title,
-            'content': reply.content,
-            'created_at': reply.created_at, 
-            'clean_id': reply.clean_id,
-            'file_name': file_name
-          })
-        return util.jsonresponse(returnreplies)   
+        return_replies = retrieve_comment_replies(incoming_id)
+        return util.jsonresponse(return_replies)   
       except:
         return util.jsonresponse({"exception": "there was some exception"})   
     except:  
       return util.jsonresponse({"exception": "there was some exception"})
-  if request.method=="GET":
-    try: 
-      reply = Reply.objects.all().filter(id=reply_id)
-      return util.jsonresponse(reply)
-    except:
-      return util.jsonresponse({"exception": "there was some exception"}) 
+  # should never need to get a single reply
+  # if request.method=="GET":
+  #   try: 
+  #     reply = Reply.objects.all().filter(id=incoming_id)
+  #     return util.jsonresponse(reply)
+  #   except:
+  #     return util.jsonresponse({"exception": "there was some exception"}) 
 
-def replies(request, comment_id):
-  util = utilities.Utilites()
-  if request.method=="GET":
-    try: 
-      returnreplies = []
-      parent_comment = Comment.objects.get(clean_id=comment_id)
-      replies = Reply.objects.all().filter(owner_id=parent_comment.id).order_by("-created_at")
 
-      for reply in replies: 
-        file_name = ""
-        if len(reply.file_name)>0:
-          file_name = reply.file_name
-        returnreplies.append({
-          'id': reply.id, 
-          'title': reply.title,
-          'content': reply.content,
-          'created_at': reply.created_at,
-          'file_name': file_name
-        })
-      return util.jsonresponse(returnreplies)   
-    except:
-      return util.jsonresponse({"exception": "there was some exception1"})
-  return util.jsonresponse({"exception": "there was some exception2"})
+# should never need this function - replies are returned from comment:GET and reply:POST
+# def replies(request, comment_id):
+#   util = utilities.Utilites()
+#   if request.method=="GET":
+#     try: 
+#       returnreplies = []
+#       parent_comment = Comment.objects.get(clean_id=comment_id)
+#       replies = Reply.objects.all().filter(owner_id=parent_comment.id).order_by("-created_at")
+
+#       for reply in replies: 
+#         file_name = ""
+#         if len(reply.file_name)>0:
+#           file_name = reply.file_name
+#         returnreplies.append({
+#           'id': reply.id, 
+#           'title': reply.title,
+#           'content': reply.content,
+#           'created_at': reply.created_at,
+#           'file_name': file_name
+#         })
+#       return util.jsonresponse(returnreplies)   
+#     except:
+#       return util.jsonresponse({"exception": "there was some exception1"})
+#   return util.jsonresponse({"exception": "there was some exception2"})
 
 def comments(request):
   print("inside comments")
@@ -134,26 +150,8 @@ def comment(request, comment_id):
   if request.method == 'PUT':
     print('inside the PUT method for get')
 
-  if request.method == 'GET':
-    
-    print("inside comment request.method is GET")
-
-    parent_comment = Comment.objects.all().filter(clean_id=comment_id)
-    replies = Reply.objects.all().filter(owner_id=parent_comment[0].id)
-    parent_comment_data = json.loads(serializers.serialize('json', parent_comment))
-    replies_data = json.loads(serializers.serialize("json", replies))
-
-    parent_comment_data[0]['pk'] = 'PRIVATE'
-    for reply, key in replies_data:
-      replies_data[key]['pk'] = 'PRIVATE'
-    
-    return_data = {
-      "comment": parent_comment_data[0], 
-      "replies": replies_data
-    }
-    
-    print("value of return_data before response: %s", return_data)
-    
+  if request.method == 'GET':  
+    return_data = retrieve_comment_replies(comment_id)
     return util.jsonresponse(return_data)
 
   elif request.method == 'POST':
@@ -164,27 +162,14 @@ def comment(request, comment_id):
     docjson = json.loads(docstring)
     title = docjson['title']
     content = docjson['content']
-    _, file_extension = os.path.splitext(request.FILES.get('image').name)
-    
-    if file_extension=='.jpg' or file_extension=='.jpeg' or file_extension=='.gif' or file_extension=='.svg' or file_extension=='.png':
-    
-      file_name = str(util.getdatetime())+file_extension
-      file_path = "../static/"+file_name
-      image_path = os.path.join(os.path.dirname(__file__), file_path)
-    
-      with open(image_path, "wb") as f:
-          f.write(request.FILES.get('image').file.read())
 
-      try:
-        comment = Comment.objects.create(title=title, content=content, file_name=file_name)
-        comment.clean_id = int(util.filterid(str(comment.id)))
-        comment.save()
-        return util.jsonresponse({
-            "formid": util.filterid(comment.id)
-          })
-      except:  
-        return util.jsonresponse({"exception": "there was some exception"})
-    else: 
-      return util.jsonresponse({"exception": "file format not valid"})
+    file_name = write_file(request.FILES.get('image'))
+
+    comment = Comment.objects.create(title=title, content=content, file_name=file_name)
+    comment.clean_id = int(util.filterid(str(comment.id)))
+    comment.save()
+    return util.jsonresponse({
+        "formid": util.filterid(comment.id)
+      })
 
   return JsonResponse({'comment_id': comment_id}, safe=False, json_dumps_params={'ensure_ascii': False})
