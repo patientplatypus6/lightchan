@@ -31,23 +31,15 @@ import PostReplyContainer from './components/postreplycontainer';
 
 function ReplyList(){
 
-  const [replyretrieveallbyid, setReplyRetrieveAllByID] = useRecoilState(retrieveAllRepliesByID);
-  const [dataArray, setDataArray] = useState([])
-
-  useEffect(()=>{
-    console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
-    console.log('value of replyretrieveallbyid: ', replyretrieveallbyid)
-    console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
-    setDataArray(replyretrieveallbyid.response.data)
-  }, [replyretrieveallbyid])    
+  const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
 
   return( 
     <div style={{textAlign: 'center'}}>
-      {dataArray!=undefined?dataArray.map((reply, key)=>{
+      {commentgetresponse.replies!=[]?commentgetresponse.replies.map((reply, key)=>{
         return(
           <div key={key}>
             <ReplyContainer
-              reply={reply}
+              reply={reply.fields}
             />
             <br/>
           </div>  
@@ -60,26 +52,11 @@ function ReplyList(){
 
 function Thread(){
 
-  const [getreply, setGetReply] = useRecoilState(replyGetState);
   const [postreply, setPostReply] = useRecoilState(replyPostState);
-
   const [getcomment, setGetComment] = useRecoilState(commentGetState);
   const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
-  const [postcomment, setPostComment] = useRecoilState(commentPostState);
-  const [commentpostresponse, setCommentPostResponse] = useRecoilState(commentPostResponse);
-  const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
-  const [replyretrieveallbyid, setReplyRetrieveAllByID] = useRecoilState(retrieveAllRepliesByID);
-
-
   const [threadnum, setThreadnum] = useState('')
   const location = useLocation();
-
-  useEffect(()=>{
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    console.log('inside commentgetresponse and value of response: ', commentgetresponse)
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    console.log('commentgetresponse.comment.fields', commentgetresponse.comment.fields)
-  }, [commentgetresponse])
 
   useEffect(()=>{
     setThreadnum(location.pathname.replace('/thread/', ''))
@@ -112,13 +89,7 @@ function Thread(){
       <br/>
       ~~~ Replies ~~~
       <br/>
-      {commentgetresponse.replies!=[]?
-        <ReplyList 
-          replies={
-            commentgetresponse.replies
-          }
-        />
-      :<div/>}
+      <ReplyList />
     </div>
   )
 

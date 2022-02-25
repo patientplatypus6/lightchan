@@ -138,15 +138,17 @@ function Api(){
         console.log("*************************************")
         console.log("here is the response: ", response)
         console.log("*************************************")
+        setCommentGetResponse({
+          comment: response.data.comment, 
+          replies: response.data.replies
+        });
         setPostReply({title: "", content: "", comment_id: "", submit:false})
-        setReplyRetrieveAllByID({submit: false, comment_id: postreply.comment_id, response})
       })
       .catch(response=>{
         console.log("*************************************")
         console.log('there was an error: ', response)
         console.log("*************************************")
         setPostReply({title: "", content: "", comment_id: "", submit:false})
-        setReplyRetrieveAllByID({submit: false, comment_id: postreply.comment_id, response})
       })
     }
   }, [postreply])

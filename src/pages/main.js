@@ -16,30 +16,43 @@ import {
   commentGetState, 
   commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
 } from '../state/state'
+import ReplyContainer from './components/replycontainer';
 
 
 function CommentList(props){
 
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
-  const [dataArray, setDataArray] = useState([])
+  // const [dataArray, setDataArray] = useState([])
 
   useEffect(()=>{
-    setDataArray(commentretrieveall.response.data)
+    // setDataArray(commentretrieveall.response.data)
+    console.log('value of commentretrieveall: ', commentretrieveall)
   }, [commentretrieveall])    
 
   return( 
     <div style={{textAlign: 'center'}}>
-      {dataArray!=undefined?dataArray.map((comment, key)=>{
+      {commentretrieveall.response.data!=undefined?commentretrieveall.response.data.map((cr, key)=>{
         return(
           <div key={key}>
             <CommentContainer
               showthread={true}
               handleNavigate={()=>{
-                props.handleNavigate('thread/'+comment.id)
+                props.handleNavigate('thread/'+cr.comment.fields.clean_id)
               }}
-              comment={comment}
+              comment={cr.comment.fields}
             />
             <br/>
+            <div style={{marginLeft: '5vw'}}>
+            {cr.replies.length>0?cr.replies.map((reply, keyreplies)=>{
+              return(
+                <div key={keyreplies}>
+                <ReplyContainer
+                  reply={reply.fields}
+                />  
+                </div>
+              )
+            }):<div/>}
+            </div>
           </div>  
         )
       }):<div>Some error</div>}

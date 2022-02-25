@@ -50,7 +50,8 @@ function PostReplyContainer({submitReply, reply}){
       <br/>
       <div 
         className='submitcommentbutton'
-        onClick={submitForm}>
+        onClick={submitForm}
+      >
         SUBMIT
       </div>
     </div>
