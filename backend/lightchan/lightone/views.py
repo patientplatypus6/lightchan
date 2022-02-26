@@ -1,3 +1,4 @@
+from cgi import test
 from distutils.command.clean import clean
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -7,6 +8,16 @@ from lightone.models import *
 from . import utilities
 
 from django.core import serializers
+from django.middleware.csrf import get_token
+
+
+def cookie_tester(request): 
+  print('inside cookie_tester')
+  # request.session['some_cookie'] = 'test'
+  # print("request.session.keys() %s", request.session.keys())
+  print('request.session.session_key %s', request.session.session_key)
+  some_cookie = request.session['some_cookie']
+  print('value of some_cookie: %s', some_cookie)
 
 def retrieve_comments_replies(index):
   comments = Comment.objects.all().order_by('-created_at')
@@ -29,7 +40,7 @@ def retrieve_comments_replies(index):
       'replies': replies_data 
     })
     count+=1
-  return return_data;  
+  return return_data;
 
 def retrieve_comment_replies(comment_id):
   parent_comment = Comment.objects.all().filter(clean_id=comment_id)
@@ -62,10 +73,12 @@ def write_file(image_property):
   return file_name
 
 def index(request):
+  cookie_tester(request)
   return HttpResponse("Hello light one.")
 
 def reply(request, incoming_id):
   util = utilities.Utilites()
+  cookie_tester(request)
   if request.method=="POST":
     
     all_comments = Comment.objects.all()
@@ -94,6 +107,7 @@ def reply(request, incoming_id):
       return util.jsonresponse({"exception": "there was some exception"})
     
 def comments(request):
+  cookie_tester(request)
   print("inside comments")
   print("value of request %s", request)
   util = utilities.Utilites()
@@ -107,6 +121,7 @@ def comments(request):
 
 
 def comment(request, comment_id):
+  cookie_tester(request)
   print("inside read_comment param")
   print("value of request %s", 
   request)
@@ -118,9 +133,31 @@ def comment(request, comment_id):
     downvote = body['downvote']
     votedelta = upvote*1+downvote*-1
     
+    # if request.session.test_cookie_worked():
+    #     # request.session.delete_test_cookie()
+    #   # return HttpResponse("You're logged in.")
+    #   print('cookie worked')
+    # else:
+    #   print('cookie did not work')
+    #   request.session.set_test_cookie()
+    
+    # print("request.session.keys() %s", request.session.keys())
+    
+    # try:
+    #   vote_tally = request.session['vote_tally']
+    #   print(vote_tally)
+    # except KeyError:
+    #   print("user has not started a session, now initializing: ")
+    #   request.session['vote_tally'] = 'test'
+      
+    # request.session['vote_tally'] = 'test'
+    # vote_tally = request.session['vote_tally']
+    # print(vote_tally)
+    
     comment = Comment.objects.all().filter(clean_id=comment_id)[0]
     comment.votes = comment.votes + votedelta
     comment.save()
+    return util.jsonresponse({'votes': comment.votes})
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)
@@ -128,8 +165,12 @@ def comment(request, comment_id):
 
   elif request.method == 'POST':
 
+    print('inside POST for comment')
+
     util = utilities.Utilites()
 
+    files = request.FILES.get('document')
+    print("value of files %s, ", files)
     docstring = request.FILES.get('document').read()
     docjson = json.loads(docstring)
     title = docjson['title']
