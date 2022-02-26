@@ -1,5 +1,3 @@
-from cgi import test
-from distutils.command.clean import clean
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
@@ -73,12 +71,12 @@ def write_file(image_property):
   return file_name
 
 def index(request):
-  cookie_tester(request)
+  # cookie_tester(request)
   return HttpResponse("Hello light one.")
 
 def reply(request, incoming_id):
   util = utilities.Utilites()
-  cookie_tester(request)
+  # cookie_tester(request)
   if request.method=="POST":
     
     all_comments = Comment.objects.all()
@@ -107,7 +105,7 @@ def reply(request, incoming_id):
       return util.jsonresponse({"exception": "there was some exception"})
     
 def comments(request):
-  cookie_tester(request)
+  # cookie_tester(request)
   print("inside comments")
   print("value of request %s", request)
   util = utilities.Utilites()
@@ -121,7 +119,7 @@ def comments(request):
 
 
 def comment(request, comment_id):
-  cookie_tester(request)
+  # cookie_tester(request)
   print("inside read_comment param")
   print("value of request %s", 
   request)
@@ -129,35 +127,63 @@ def comment(request, comment_id):
   
   if request.method == 'PUT':
     body = json.loads(request.body)
+    
     upvote = body['upvote']
     downvote = body['downvote']
     votedelta = upvote*1+downvote*-1
+    votename = "upvote" if upvote else "downvote"
     
-    # if request.session.test_cookie_worked():
-    #     # request.session.delete_test_cookie()
-    #   # return HttpResponse("You're logged in.")
-    #   print('cookie worked')
-    # else:
-    #   print('cookie did not work')
-    #   request.session.set_test_cookie()
+    votedelta_sess = str(comment_id)+"vote"
+    votename_sess = str(comment_id)+"votename" 
     
-    # print("request.session.keys() %s", request.session.keys())
+    def set_votes(votedelta, votename):
+      request.session[votedelta_sess] = votedelta
+      request.session[votename_sess] = votename
+      comment = Comment.objects.all().filter(clean_id=comment_id)[0]
+      comment.votes = comment.votes + votedelta
+      comment.save()
+      return comment
     
-    # try:
-    #   vote_tally = request.session['vote_tally']
-    #   print(vote_tally)
-    # except KeyError:
-    #   print("user has not started a session, now initializing: ")
-    #   request.session['vote_tally'] = 'test'
+    try: 
+      prev_name = request.session[votename_sess]
       
-    # request.session['vote_tally'] = 'test'
-    # vote_tally = request.session['vote_tally']
-    # print(vote_tally)
+      print("value of prev_name: %s", prev_name)
+      print("value of upvote: %s", upvote)
+      print("value of downvote: %s", downvote)
+      
+      if prev_name == "upvote" and upvote:
+        print("if 1")
+        votename = "base"
+        votedelta = -1
+      elif prev_name == "upvote" and downvote:
+        print("if 2")
+        votename = "downvote"
+        votedelta = -2
+      elif prev_name == "downvote" and upvote:
+        print("if 3")
+        votename = "upvote"
+        votedelta = 2
+      elif prev_name == "downvote" and downvote:
+        print("if 4")
+        votename = "base"
+        votedelta = 1
+      elif prev_name == "base" and upvote:
+        print("if 5")
+        votename = "upvote"
+        votedelta = 1
+      elif prev_name == "base" and downvote:
+        print("if 6")
+        votename = 'downvote'
+        votedelta = -1
+      
+      comment = set_votes(votedelta, votename)
+      
+      return util.jsonresponse({'votes': comment.votes})
+    except: 
+      print('User has not voted yet - ')
+      comment = set_votes(votedelta, votename)
+      return util.jsonresponse({'votes': comment.votes})
     
-    comment = Comment.objects.all().filter(clean_id=comment_id)[0]
-    comment.votes = comment.votes + votedelta
-    comment.save()
-    return util.jsonresponse({'votes': comment.votes})
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)
