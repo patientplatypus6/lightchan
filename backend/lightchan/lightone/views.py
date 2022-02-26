@@ -1,3 +1,4 @@
+from distutils.command.clean import clean
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
@@ -112,7 +113,14 @@ def comment(request, comment_id):
   util = utilities.Utilites()
   
   if request.method == 'PUT':
-    print('inside the PUT method for get')
+    body = json.loads(request.body)
+    upvote = body['upvote']
+    downvote = body['downvote']
+    votedelta = upvote*1+downvote*-1
+    
+    comment = Comment.objects.all().filter(clean_id=comment_id)[0]
+    comment.votes = comment.votes + votedelta
+    comment.save()
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)

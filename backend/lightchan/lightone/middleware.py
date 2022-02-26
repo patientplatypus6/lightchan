@@ -7,7 +7,7 @@ def every_request(get_response):
   # One-time configuration and initialization.
 
   def middleware(request):
-    # Code to be executed for each request before
+    # Code to be execute  d for each request before
     # the view (and later middleware) are called.
     
     print('inside the every_request middleware')
@@ -28,14 +28,6 @@ def every_request(get_response):
       print(dif>10000)
       if dif > 10000:
         comment.delete()
-    # Comment.objects.filter(clean_id__lt>5).delete()
-    
-    
-    # currentime = util.getdatetime()
-    
-
-    
-    
     
     response = get_response(request)
 
