@@ -18,7 +18,8 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
+    path('*', views.anypath, name='anypath'),
     path('', views.index, name='index'),
     path('lightone/', include('lightone.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls)
 ]

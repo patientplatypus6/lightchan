@@ -11,6 +11,9 @@
 # production
 /build
 
+# static directory
+/backend/lightchan/static 
+
 # misc
 .DS_Store
 .env.local
