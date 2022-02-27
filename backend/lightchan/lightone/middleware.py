@@ -23,6 +23,8 @@ def handle_clean():
     if dif > 10000:
       comment.delete()  
 
+
+
 # def handle_session(request):
   # print('value of request.session %s', request.session)
   # try:

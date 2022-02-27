@@ -11,8 +11,6 @@ from django.middleware.csrf import get_token
 
 def cookie_tester(request): 
   print('inside cookie_tester')
-  # request.session['some_cookie'] = 'test'
-  # print("request.session.keys() %s", request.session.keys())
   print('request.session.session_key %s', request.session.session_key)
   some_cookie = request.session['some_cookie']
   print('value of some_cookie: %s', some_cookie)
@@ -71,12 +69,10 @@ def write_file(image_property):
   return file_name
 
 def index(request):
-  # cookie_tester(request)
   return HttpResponse("Hello light one.")
 
 def reply(request, incoming_id):
   util = utilities.Utilites()
-  # cookie_tester(request)
   if request.method=="POST":
     
     all_comments = Comment.objects.all()
@@ -105,7 +101,6 @@ def reply(request, incoming_id):
       return util.jsonresponse({"exception": "there was some exception"})
     
 def comments(request):
-  # cookie_tester(request)
   print("inside comments")
   print("value of request %s", request)
   util = utilities.Utilites()
@@ -123,8 +118,9 @@ def comment(request, comment_id):
   print("value of request %s", 
   request)
   util = utilities.Utilites()
-  
+
   if request.method == 'PUT':
+
     body = json.loads(request.body)
     
     upvote = body['upvote']
@@ -138,7 +134,7 @@ def comment(request, comment_id):
     def set_votes(votedelta, votename):
       request.session[votedelta_sess] = votedelta
       request.session[votename_sess] = votename
-      request.session['vote_state/'+str(comment_id)] = votename
+      request.session[str(comment_id)+"/vote/"+votename] = votedelta
       comment = Comment.objects.all().filter(clean_id=comment_id)[0]
       comment.votes = comment.votes + votedelta
       comment.save()

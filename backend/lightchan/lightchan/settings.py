@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lightone', 
-    'corsheaders',
-    'requests_toolbelt.multipart'
+    'corsheaders'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
