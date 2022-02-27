@@ -26,7 +26,17 @@ function CommentList(props){
 
   useEffect(()=>{
     // setDataArray(commentretrieveall.response.data)
+    console.log("*************")
+    console.log("*************")
+    console.log("*************")
+
     console.log('value of commentretrieveall: ', commentretrieveall)
+
+    console.log("*************")
+    console.log("*************")
+    console.log("*************")
+
+
   }, [commentretrieveall])    
 
   return( 
@@ -55,7 +65,7 @@ function CommentList(props){
             </div>
           </div>  
         )
-      }):<div>Some error</div>}
+      }):<div/>}
     </div>
   )
 

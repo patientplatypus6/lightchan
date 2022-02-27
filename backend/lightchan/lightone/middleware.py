@@ -6,6 +6,10 @@ import datetime
 from django.contrib.sessions.backends.db import SessionStore
 import random
 
+# def handle_votes(request):
+#   request.COOKIE['test'] = 'some test'
+#   return request
+  
 def handle_clean():
   comments = Comment.objects.all()
   for comment in comments:
@@ -52,6 +56,7 @@ def every_request(get_response):
     print("MIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWARE")
     print('inside the every_request middleware')
     handle_clean()
+    # request = handle_votes(request)
     # handle_session(request)
     print("MIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWARE")
     print("MIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWAREMIDDLEWARE")

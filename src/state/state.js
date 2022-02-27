@@ -8,10 +8,9 @@ import {
   useRecoilValue,
 } from 'recoil';
 
-//uploadfile / setUploadFile
 //vote / setVote
 const voteField = atom({
-  key: 'vote',
+  key: 'voteField',
   default: {
     upvote: false, 
     downvote: false, 
@@ -20,6 +19,12 @@ const voteField = atom({
     id: "",
     submit: false
   }
+})
+
+//votedatum / setVoteData
+const voteData = atom({
+  key: 'voteData', 
+  default: {votes: {}}
 })
 
 //uploadfile / setUploadFile
@@ -91,6 +96,7 @@ const retrieveAllComments = atom({
 
 export {
   voteField,
+  voteData,
   uploadFile,
   replyGetState, 
   replyGetResponse,

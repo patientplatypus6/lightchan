@@ -119,7 +119,6 @@ def comments(request):
 
 
 def comment(request, comment_id):
-  # cookie_tester(request)
   print("inside read_comment param")
   print("value of request %s", 
   request)
@@ -134,11 +133,12 @@ def comment(request, comment_id):
     votename = "upvote" if upvote else "downvote"
     
     votedelta_sess = str(comment_id)+"vote"
-    votename_sess = str(comment_id)+"votename" 
+    votename_sess = str(comment_id)+"votename"
     
     def set_votes(votedelta, votename):
       request.session[votedelta_sess] = votedelta
       request.session[votename_sess] = votename
+      request.session['vote_state/'+str(comment_id)] = votename
       comment = Comment.objects.all().filter(clean_id=comment_id)[0]
       comment.votes = comment.votes + votedelta
       comment.save()

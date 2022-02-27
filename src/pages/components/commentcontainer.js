@@ -4,7 +4,8 @@ import '../main.css'
 import img404 from '../../images/img404.jpeg'
 import arrow from '../../images/arrow.svg'
 
-import { voteField } from '../../state/state';
+import { voteField, voteData } from '../../state/state';
+import { getCookie } from '../../utilities/utilities';
 
 import {
   RecoilRoot,
@@ -17,33 +18,35 @@ import {
 function CommentContainer({comment, handleNavigate, showthread}){
 
   const [imgError, setImgError] = useState(false)
+  const [votedatum, setVoteData] = useRecoilState(voteData)
   const [vote, setVote] = useRecoilState(voteField);
 
   console.log('value of comment.image_path: ', comment.file_name)
 
   const voteHandler=(direction)=>{
     console.log('inside voteHandler')
-    const voteobj = {}
+    var voteobj = {}
     if(direction=='up'){
       voteobj = {
         upvote: true, 
         downvote: false, 
-        comment: false, 
+        comment: true, 
         reply: false,
-        id: comment.comment_id,
+        id: comment.clean_id,
         submit: true
       }
     }else if(direction=='down'){
       voteobj = {
         upvote: false, 
         downvote: true, 
-        comment: false, 
+        comment: true, 
         reply: false,
-        id: comment.comment_id,
+        id: comment.clean_id,
         submit: true
       }
     }
-    setVote(voteField)
+    console.log('value of voteobj: ', voteobj)
+    setVote(voteobj)
 
   }
 
@@ -77,6 +80,10 @@ function CommentContainer({comment, handleNavigate, showthread}){
 
   }
 
+  useEffect(()=>{
+    console.log("VALUE OF COOKIES: ", document.cookie.toString())
+  })
+
   return(
     <div className='commentcontainer'>
       <div className='commenttitlebar'>
@@ -84,6 +91,9 @@ function CommentContainer({comment, handleNavigate, showthread}){
       {showthread?<span className='viewbutton' onClick={()=>{
         handleNavigate()
       }}>view thread</span>:<span/>}
+      <span>
+        {votedatum.votes[comment.clean_id]!=null?<div style={{display: 'inline-block', paddingLeft: '5p', paddingRight: '5px'}}>{votedatum.votes[comment.clean_id]}</div>:<div style={{display: 'inline-block', paddingLeft: '5px', paddingRight: '5px'}}>{comment.votes}</div>}
+      </span>
       <span>
         <div className='arrowbutton'
           onClick={()=>{voteHandler('up')}}
@@ -103,6 +113,14 @@ function CommentContainer({comment, handleNavigate, showthread}){
         {picHandler()}
         <div className='commentcontent'>
           {comment.content}
+          {comment.clean_id}
+          ****
+          {JSON.stringify(votedatum.votes[comment.clean_id])}
+          ****
+          ****
+          {JSON.stringify(votedatum.votes[comment.clean_id]==null)}
+          ****
+          {JSON.stringify(votedatum)}
         </div>
       </div>
     </div>
