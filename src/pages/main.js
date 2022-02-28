@@ -22,10 +22,8 @@ import ReplyContainer from './components/replycontainer';
 function CommentList(props){
 
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
-  // const [dataArray, setDataArray] = useState([])
 
   useEffect(()=>{
-    // setDataArray(commentretrieveall.response.data)
     console.log("*************")
     console.log("*************")
     console.log("*************")

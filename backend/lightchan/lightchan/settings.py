@@ -143,7 +143,8 @@ DATABASES = {
        'NAME': 'lightchan',
        'USER': 'pixel',
        'PASSWORD': 'stardust',
-       'HOST': 'localhost',
+    #    'HOST': 'localhost',
+       'HOST': '/var/lib/postgresql/data',
        'PORT': '5432',
    }
 }

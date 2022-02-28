@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/pweyand/NEST/lightchan/backend/env"
+VIRTUAL_ENV="/home/pweyand/NEST/lightchan/lightchan/backend/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
