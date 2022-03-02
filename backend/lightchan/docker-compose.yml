@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  db:
+    restart: always
+    image: postgres
+    volumes:
+      - $PWD/docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - $PWD/data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_NAME=dev-postgres
+      - POSTGRES_USER=pixel
+      - POSTGRES_DATABASE=lightchan
+      - POSTGRES_PASSWORD=stardust 
+  web:
+    build: .
+    restart: always
+    volumes:
+      - .:/code
+    command: sh -c "./waitfor.sh db:5432 -- python3 manage.py runserver"
+    ports:
+      - "8001:8001"
+    environment:
+      - POSTGRES_NAME=dev-postgres
+      - POSTGRES_USER=pixel
+      - POSTGRES_DATABASE=lightchan
+      - POSTGRES_PASSWORD=stardust
+      - POSTGRES_HOST=db  
+
+#version: "3.9"
+   
+#services:
+#  db:
+#    restart: always
+#    image: postgres
+#    volumes:
+#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ./data/db:/var/lib/postgresql/data
+#    environment:
+#      - POSTGRES_NAME=dev-postgres
+#      - POSTGRES_USER=pixel
+#      - POSTGRES_DB=lightchan
+#      - POSTGRES_PASSWORD=stardust 
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U pixel"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    ports:
+#      - 5432:5432 
+#  web:
+#    build: .
+#    restart: always
+#    #command: sh -c "python3 manage.py runserver"
+#    command: sh -c "./waitfor.sh db:5432 -- python3 manage.py runserver"
+#    volumes:
+#      - .:/code
+#    ports:
+#      - "8001:8001"
+#    environment:
+#      - POSTGRES_NAME=dev-postgres
+#      - POSTGRES_USER=pixel
+#      - POSTGRES_DB=lightchan
+#      - POSTGRES_PASSWORD=stardust
+#    depends_on:
+#      db:
+#        condition: service_healthy
