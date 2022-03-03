@@ -10,5 +10,7 @@ python manage.py createsuperuser \
   --email peterweyand0@gmail.com
 # --database lightchan
 
-
-
+echo "now running the server"
+# python3 manage.py runserver
+daphne -b 0.0.0.0 -p 8000 lightchan.asgi:application
+echo "now running the server"

@@ -6,26 +6,54 @@ services:
     image: postgres
     volumes:
       - ./docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data <- this creates the error. Why? 
+      # - ./data/db:/data/db <- this works without error
     environment:
       - POSTGRES_NAME=dev-postgres
       - POSTGRES_USER=pixel
       - POSTGRES_DATABASE=lightchan
       - POSTGRES_PASSWORD=stardust 
+    ports: 
+      - "5432:5432"
   web:
     build: .
     restart: always
     volumes:
       - .:/code
-    command: sh -c "./waitfor.sh db:5432 -- python3 manage.py runserver"
+    # command: sh -c "./waitfor.sh db:5432 -- python3 manage.py runserver"
+    command: sh -c "./entrypoint.sh"
     ports:
-      - "8001:8001"
+      - "8000:8000"
     environment:
       - POSTGRES_NAME=dev-postgres
       - POSTGRES_USER=pixel
       - POSTGRES_DATABASE=lightchan
       - POSTGRES_PASSWORD=stardust
       - POSTGRES_HOST=db  
+    depends_on:
+      - "db"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #version: "3.9"
    
