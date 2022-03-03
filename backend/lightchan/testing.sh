@@ -1,13 +1,13 @@
 #!/bin/bash
 
-PWD=pwd
+export PWD=/Users/peterweyand/NEST/lightchan/backend/lightchan
 
 rm -rf ./data
 mkdir data
-chmod 777 data
+#chmod 777 data
 cd data
 mkdir db
-chmod 777 db
+#chmod 777 db
 cd ..
 
 docker-compose down

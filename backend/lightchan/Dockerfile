@@ -26,7 +26,7 @@ COPY . /code/
 
 #COPY . .
 
-#CMD [ "python3", "manage.py runserver" ]
+CMD [ "python3", "manage.py runserver" ]
 
 
 #RUN apk update && apk add --no-cache \
