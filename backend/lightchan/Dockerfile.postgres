@@ -1,0 +1,5 @@
+FROM postgres:latest
+
+RUN groupadd --gid 1000 macwrite
+RUN usermod -a -G 1000 postgres
+RUN groups postgres
