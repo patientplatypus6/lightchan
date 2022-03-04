@@ -1,20 +1,25 @@
-version: "3.9"
-
 services:
   db:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.postgres
+    user: postgres:postgres
     restart: always
-    image: postgres
     volumes:
       - ./docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data/db:/var/lib/postgresql/data <- this creates the error. Why? 
-      # - ./data/db:/data/db <- this works without error
+      - ./data/db:/var/lib
     environment:
       - POSTGRES_NAME=dev-postgres
       - POSTGRES_USER=pixel
       - POSTGRES_DATABASE=lightchan
-      - POSTGRES_PASSWORD=stardust 
-    ports: 
+      - POSTGRES_PASSWORD=stardust
+    ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lightchan"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   backend:
     build: .
     restart: always
@@ -41,7 +46,28 @@ services:
     depends_on:
       - "backend"
 
+  pgadmin4:
+    image: dpage/pgadmin4:latest
+    restart: always
+    ports:
+      - "8080:80"
+    environment: 
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
+      - PGADMIN_CONFIG_LOGIN_BANNER="Authorised users only!"
+      - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
+    links: 
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - pgAdmin-volume:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json
 
+volumes:
+  pgAdmin-volume:
 
 
 
