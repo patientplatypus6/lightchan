@@ -15,12 +15,11 @@ services:
       - POSTGRES_PASSWORD=stardust 
     ports: 
       - "5432:5432"
-  web:
+  backend:
     build: .
     restart: always
     volumes:
       - .:/code
-    # command: sh -c "./waitfor.sh db:5432 -- python3 manage.py runserver"
     command: sh -c "./entrypoint.sh"
     ports:
       - "8000:8000"
@@ -32,6 +31,15 @@ services:
       - POSTGRES_HOST=db  
     depends_on:
       - "db"
+  frontend:
+    build: ../../
+    restart: always
+    volumes:
+      - .:/app
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - "backend"
 
 
 
