@@ -126,7 +126,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'lightchan.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -143,9 +142,8 @@ DATABASES = {
        'NAME': 'lightchan',
        'USER': 'pixel',
        'PASSWORD': 'stardust',
-    #    'HOST': 'localhost',
-       'HOST': '/var/lib/postgresql/data',
-       'PORT': '5432',
+       'HOST': 'db',
+       'PORT': '5432'
    }
 }
 
