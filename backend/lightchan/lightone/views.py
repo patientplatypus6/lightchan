@@ -1,3 +1,4 @@
+from email.mime import image
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
@@ -7,13 +8,6 @@ from . import utilities
 
 from django.core import serializers
 from django.middleware.csrf import get_token
-
-
-def cookie_tester(request): 
-  print('inside cookie_tester')
-  print('request.session.session_key %s', request.session.session_key)
-  some_cookie = request.session['some_cookie']
-  print('value of some_cookie: %s', some_cookie)
 
 def retrieve_comments_replies(index):
   comments = Comment.objects.all().order_by('-created_at')
@@ -61,11 +55,15 @@ def write_file(image_property):
   util = utilities.Utilites()
   _, file_extension = os.path.splitext(image_property.name)
   file_name = str(util.getdatetime())+file_extension
-  file_path = "../static/"+file_name
+  # file_path = "../code/static_images/"+file_name
+  file_path = "../code/static" + file_name
   image_path = os.path.join(os.path.dirname(__file__), file_path)
-  
+  # dirname = os.path.dirname(image_path)
+  # if not os.path.exists(dirname):
+  #   print("file directory does not exist, creating")
+  #   os.makedirs(dirname)
   with open(image_path, "wb") as f:
-      f.write(image_property.file.read())
+    f.write(image_property.file.read())
   return file_name
 
 def index(request):
@@ -118,6 +116,8 @@ def comment(request, comment_id):
   print("value of request %s", 
   request)
   util = utilities.Utilites()
+
+  # cookie_tester(request)
 
   if request.method == 'PUT':
 
@@ -179,7 +179,6 @@ def comment(request, comment_id):
       print('User has not voted yet - ')
       comment = set_votes(votedelta, votename)
       return util.jsonresponse({'votes': comment.votes})
-    
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)

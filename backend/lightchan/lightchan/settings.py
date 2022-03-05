@@ -65,6 +65,8 @@ MIDDLEWARE = [
 #     'Access-Control-Allow-Origin',
 # )
 
+CORS_ORIGIN_ALLOW_ALL= True
+
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r".*",
 ]
@@ -74,12 +76,16 @@ CORS_ALLOWED_ORIGINS = [
     "https://api.domain.com",
     "http://localhost:8080",
     "http://127.0.0.1:9000", 
-    "http://localhost:3000"
+    "http://localhost:3000",  
+    "http://*"
+    #"frontend"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*", 
-    "http://localhost:3000"
+    "http://localhost:3000", 
+    "http://*"
+    #"frontend"
 ]
 
 CORS_ALLOW_METHODS = [
