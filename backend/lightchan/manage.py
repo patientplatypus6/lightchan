@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
+import logging
 import sys
 
 
 def main():
     """Run administrative tasks."""
+    # sys.stdout.flush()
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lightchan.settings')
     
-    print("inside django app main")
+    logging.info("inside django app main")
     
     try:
         from django.core.management import execute_from_command_line

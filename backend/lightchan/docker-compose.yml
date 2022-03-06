@@ -1,5 +1,8 @@
 version: "3.9"
 
+volumes:
+  volume1:
+
 services:
   db:
     restart: always
@@ -19,7 +22,7 @@ services:
     build: .
     restart: always
     volumes:
-      - .:/code
+      - volume1:/code
     command: sh -c "./entrypoint.sh"
     ports:
       - "8000:8000"
@@ -40,7 +43,14 @@ services:
       - "3000:3000"
     depends_on:
       - "backend"
-
+  nginx:
+    image: nginx
+    ports:
+      - "9000:80"
+    volumes:
+      - volume1:/usr/share/nginx/html
+    links:
+      - "backend"
 
 
 

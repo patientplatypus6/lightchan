@@ -1,4 +1,6 @@
 from email.mime import image
+from fileinput import filename
+from importlib.metadata import files
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
@@ -7,13 +9,15 @@ from lightone.models import *
 from . import utilities
 
 from django.core import serializers
-from django.middleware.csrf import get_token
+from django.core.files.storage import FileSystemStorage
+
+import logging
 
 def retrieve_comments_replies(index):
   comments = Comment.objects.all().order_by('-created_at')
-  print("value of comments %s, ", comments)
+  logging.info("value of comments %s, ", comments)
   comment_data = json.loads(serializers.serialize('json', comments))
-  print("value of comment_data: %s ", comment_data)
+  logging.info("value of comment_data: %s ", comment_data)
  
   return_data = []
   count = 0
@@ -30,7 +34,7 @@ def retrieve_comments_replies(index):
       'replies': replies_data 
     })
     count+=1
-  return return_data;
+  return return_data
 
 def retrieve_comment_replies(comment_id):
   parent_comment = Comment.objects.all().filter(clean_id=comment_id)
@@ -49,22 +53,33 @@ def retrieve_comment_replies(comment_id):
     "replies": replies_data
   }
   
-  return return_data;
+  return return_data
 
-def write_file(image_property):
+def write_file(request):
   util = utilities.Utilites()
+  image_property = request.FILES.get('image')
   _, file_extension = os.path.splitext(image_property.name)
   file_name = str(util.getdatetime())+file_extension
-  # file_path = "../code/static_images/"+file_name
-  file_path = "../code/static" + file_name
+  file_path = "../static/" + file_name
   image_path = os.path.join(os.path.dirname(__file__), file_path)
-  # dirname = os.path.dirname(image_path)
-  # if not os.path.exists(dirname):
-  #   print("file directory does not exist, creating")
-  #   os.makedirs(dirname)
+  logging.info("value of image_path: %s", image_path)
+  logging.info("value of file_name: %s", file_name)
   with open(image_path, "wb") as f:
     f.write(image_property.file.read())
   return file_name
+
+# def write_file(request):
+#   logging.info("inside the write_file_test def")
+#   fs = FileSystemStorage()
+#   image_file = request.FILES.get('image')
+#   logging.info("inside the write_file_test def %s", image_file.name)
+#   image_bytes = image_file.file.read()
+#   # logging.info("value of image_bytes: %s", image_bytes)
+#   # fs.location()
+#   image_saved = fs.save(image_file.name, image_file)
+#   logging.info("value of image_saved: %s", image_saved)
+#   return image_file.name
+  
 
 def index(request):
   return HttpResponse("Hello light one.")
@@ -78,13 +93,13 @@ def reply(request, incoming_id):
     for comment in all_comments: 
       parentuuid = comment.id if comment.clean_id == str(incoming_id) else ""
 
-    print('value of parentuuid: %s', parentuuid)
+    logging.info('value of parentuuid: %s', parentuuid)
     
     docjson = json.loads(request.FILES.get('document').read())
     title = docjson['title']
     content = docjson['content']
-    
-    file_name = write_file(request.FILES.get('image'))
+
+    file_name = write_file(request)
 
     try:
       reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
@@ -99,12 +114,12 @@ def reply(request, incoming_id):
       return util.jsonresponse({"exception": "there was some exception"})
     
 def comments(request):
-  print("inside comments")
-  print("value of request %s", request)
+  logging.info("inside comments")
+  logging.info("value of request %s", request)
   util = utilities.Utilites()
 
   if request.method == 'GET':
-    print('inside GET')
+    logging.info('inside GET')
     return_data = retrieve_comments_replies(3)
     return util.jsonresponse(return_data)
   
@@ -112,12 +127,11 @@ def comments(request):
 
 
 def comment(request, comment_id):
-  print("inside read_comment param")
-  print("value of request %s", 
+
+  logging.info("inside read_comment param")
+  logging.info("value of request %s", 
   request)
   util = utilities.Utilites()
-
-  # cookie_tester(request)
 
   if request.method == 'PUT':
 
@@ -143,32 +157,32 @@ def comment(request, comment_id):
     try: 
       prev_name = request.session[votename_sess]
       
-      print("value of prev_name: %s", prev_name)
-      print("value of upvote: %s", upvote)
-      print("value of downvote: %s", downvote)
+      logging.info("value of prev_name: %s", prev_name)
+      logging.info("value of upvote: %s", upvote)
+      logging.info("value of downvote: %s", downvote)
       
       if prev_name == "upvote" and upvote:
-        print("if 1")
+        logging.info("if 1")
         votename = "base"
         votedelta = -1
       elif prev_name == "upvote" and downvote:
-        print("if 2")
+        logging.info("if 2")
         votename = "downvote"
         votedelta = -2
       elif prev_name == "downvote" and upvote:
-        print("if 3")
+        logging.info("if 3")
         votename = "upvote"
         votedelta = 2
       elif prev_name == "downvote" and downvote:
-        print("if 4")
+        logging.info("if 4")
         votename = "base"
         votedelta = 1
       elif prev_name == "base" and upvote:
-        print("if 5")
+        logging.info("if 5")
         votename = "upvote"
         votedelta = 1
       elif prev_name == "base" and downvote:
-        print("if 6")
+        logging.info("if 6")
         votename = 'downvote'
         votedelta = -1
       
@@ -176,7 +190,7 @@ def comment(request, comment_id):
       
       return util.jsonresponse({'votes': comment.votes})
     except: 
-      print('User has not voted yet - ')
+      logging.info('User has not voted yet - ')
       comment = set_votes(votedelta, votename)
       return util.jsonresponse({'votes': comment.votes})
 
@@ -186,18 +200,22 @@ def comment(request, comment_id):
 
   elif request.method == 'POST':
 
-    print('inside POST for comment')
+    logging.info('inside POST for comment')
 
     util = utilities.Utilites()
 
     files = request.FILES.get('document')
-    print("value of files %s, ", files)
+    logging.info("value of files %s, ", files)
     docstring = request.FILES.get('document').read()
     docjson = json.loads(docstring)
     title = docjson['title']
     content = docjson['content']
 
-    file_name = write_file(request.FILES.get('image'))
+    logging.info("~~~NOW WRITING IMAGE TO FILE~~~")
+    x = 3
+    logging.info("~~~NOW WRITING IMAGE TO FILE~~~")
+    logging.info("testy test; %s", x)
+    file_name = write_file(request)
 
     comment = Comment.objects.create(title=title, content=content, file_name=file_name)
     comment.clean_id = int(util.filterid(str(comment.id)))

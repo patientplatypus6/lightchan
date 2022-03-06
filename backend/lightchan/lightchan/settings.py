@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 from corsheaders.defaults import default_headers
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,16 +56,6 @@ MIDDLEWARE = [
     'lightone.middleware.every_request'
 ]
 
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-# r"^https://\w+\.domain\.com$",
-# ]
-
-# CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOW_HEADERS = default_headers + (
-#     'Access-Control-Allow-Origin',
-# )
-
 CORS_ORIGIN_ALLOW_ALL= True
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
@@ -78,14 +69,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:9000", 
     "http://localhost:3000",  
     "http://*"
-    #"frontend"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*", 
     "http://localhost:3000", 
     "http://*"
-    #"frontend"
 ]
 
 CORS_ALLOW_METHODS = [
@@ -191,12 +180,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (str(BASE_DIR.joinpath('static')),) # new
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-#     '/var/www/static/',
-# ]
+MEDIA_URL = '/media/'
+# MEDIA_ROOT =(str(BASE_DIR.joinpath('media'))) # new
+MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
