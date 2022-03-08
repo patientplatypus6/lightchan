@@ -68,19 +68,6 @@ def write_file(request):
     f.write(image_property.file.read())
   return file_name
 
-# def write_file(request):
-#   logging.info("inside the write_file_test def")
-#   fs = FileSystemStorage()
-#   image_file = request.FILES.get('image')
-#   logging.info("inside the write_file_test def %s", image_file.name)
-#   image_bytes = image_file.file.read()
-#   # logging.info("value of image_bytes: %s", image_bytes)
-#   # fs.location()
-#   image_saved = fs.save(image_file.name, image_file)
-#   logging.info("value of image_saved: %s", image_saved)
-#   return image_file.name
-  
-
 def index(request):
   return HttpResponse("Hello light one.")
 

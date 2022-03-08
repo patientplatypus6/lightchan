@@ -4,7 +4,16 @@
 
 # daphne -b 0.0.0.0 -p 8001 lightchan.asgi:application
 
-docker compose down --volumes
-docker compose build 
-docker compose up
+# echo "now loading fswatch/backend on file changes"
+# fswatch -or ../ | xargs -n1 -I{} docker restart backend   
+# echo "now loading fswatch/frontend/src on file changes"
+# fswatch -or ../../src | xargs -n1 -I{} docker restart frontend &
+# echo "now starting node file"
+# node ./watchfile.js
 
+echo "docker compose down"
+docker compose down --volumes
+echo "docker compose build"
+docker compose build 
+echo "docker compose up"
+docker compose up
