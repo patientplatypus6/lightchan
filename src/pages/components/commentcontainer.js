@@ -69,7 +69,7 @@ function CommentContainer({comment, handleNavigate, showthread}){
               console.log("inside the onError function")
               setImgError(true)
             }}
-            src={"http://localhost:8000/static/"+comment.file_name} 
+            src={"http://localhost:9000/static/"+comment.file_name} 
             className='commentimage'
           />
         )

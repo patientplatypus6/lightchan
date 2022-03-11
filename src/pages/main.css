@@ -1,10 +1,9 @@
 .main{
-  background-color: #00008b;
+  background-color: #1ed14b;
   color: rgb(116, 158, 158);
   min-height: 100vh;
   text-align: center;
 }
-
 .submitcommentbutton{
   display: inline-block;
   background-color: rgb(32, 73, 4);
@@ -26,7 +25,6 @@
   font-size: 0.7rem;
   border-radius: 5px;
   cursor: pointer;
-  /* border: 2px solid blue ; */
   padding: 5px;  
 }
 

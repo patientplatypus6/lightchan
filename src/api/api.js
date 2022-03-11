@@ -135,15 +135,15 @@ function Api(){
         "http://localhost:8000/lightone/comments/"
       )
       .then(response=>{
-        // console.log("*************************************")
-        // console.log("here is the response: ", response)
-        // console.log("*************************************")
+        console.log("*************************************")
+        console.log("here is the response: ", response)
+        console.log("*************************************")
         setCommentRetrieveAll({submit: false, response});
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
+        console.log("*************************************")
+        console.log('there was an error: ', response)
+        console.log("*************************************")
         setCommentRetrieveAll({submit: false, response});
       })
     }

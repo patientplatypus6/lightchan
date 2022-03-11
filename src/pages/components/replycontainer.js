@@ -25,7 +25,7 @@ function ReplyContainer({reply}){
       </span>
       </div>
       <div className='replycontentbox'>
-        {reply.file_name!=""&&reply.file_name!=undefined?<img src={"http://localhost:8000/static/"+reply.file_name} className='replyimage'/>:<div/>}
+        {reply.file_name!=""&&reply.file_name!=undefined?<img src={"http://localhost:9000/static/"+reply.file_name} className='replyimage'/>:<div/>}
         <div className='replycontent'>
           {reply.content}
         </div>

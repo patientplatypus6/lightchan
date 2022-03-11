@@ -33,8 +33,7 @@ function CommentList(props){
     console.log("*************")
     console.log("*************")
     console.log("*************")
-
-
+    
   }, [commentretrieveall])    
 
   return( 

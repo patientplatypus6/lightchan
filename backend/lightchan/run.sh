@@ -11,6 +11,16 @@
 # echo "now starting node file"
 # node ./watchfile.js
 
+# rm -rf data
+# mkdir data && chmod 777 data && cd data && mkdir db & chmod 777 && ../..
+
+# cd ./watchvolume
+# ./watchfront.sh &
+# ./watchback.sh &
+# cd ..
+
+echo "now pruning system"
+docker system prune -f -a
 echo "docker compose down"
 docker compose down --volumes
 echo "docker compose build"
