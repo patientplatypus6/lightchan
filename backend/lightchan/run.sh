@@ -19,11 +19,18 @@
 # ./watchback.sh &
 # cd ..
 
+# fswatch -or ../ | xargs -n1 -I{} docker restart backend   
+# fswatch -or ../../src | xargs -n1 -I{} docker restart frontend
+
 echo "now pruning system"
 docker system prune -f -a
 echo "docker compose down"
 docker compose down --volumes
 echo "docker compose build"
 docker compose build 
-echo "docker compose up"
+echo "docker compose up -d"
 docker compose up
+
+# find ../../src | entr sh -c 'docker restart frontend'
+
+# echo "after find entr program"

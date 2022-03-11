@@ -5,8 +5,8 @@ volumes:
 
 services:
   db:
-    restart: always
     image: postgres
+    restart: always
     volumes:
       - ./docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data/db:/var/lib/postgresql/data
@@ -40,11 +40,12 @@ services:
       db:
         condition: service_healthy 
   watchvolume:
-    build: ./watchvolume
+    build: ../../watchvolume
+    restart: always
     volumes: 
       - '/var/run/docker.sock:/var/run/docker.sock'
       - volume1:/code
-    restart: always
+    command: sh -c "../entrypointwatch.sh"
     depends_on:
       - 'backend'
   frontend:
@@ -58,6 +59,7 @@ services:
       - "backend"
   nginx:
     image: nginx
+    restart: always
     ports:
       - "9000:80"
     volumes:
