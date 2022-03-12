@@ -23,7 +23,7 @@
 # fswatch -or ../../src | xargs -n1 -I{} docker restart frontend
 
 echo "now pruning system"
-docker system prune -f -a
+docker system prune -f -a --volumes
 echo "docker compose down"
 docker compose down --volumes
 echo "docker compose build"

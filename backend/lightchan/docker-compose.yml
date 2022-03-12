@@ -39,23 +39,21 @@ services:
     depends_on:
       db:
         condition: service_healthy 
-  # watchvolume:
-  #   build: ../../watchvolume
-  #   restart: always
-  #   volumes: 
-  #     - '/var/run/docker.sock:/var/run/docker.sock'
-  #     - volume1:/code
-  #   depends_on:
-  #     - 'backend'
   frontend:
-    build: ../../
+    build: 
+      context: ../../
     restart: always
     volumes:
-      - .:/app
+      - '../../:/app'
+      - '/app/node_modules'
     ports: 
       - "3000:3000"
     depends_on:
       - "backend"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
   nginx:
     image: nginx
     restart: always
