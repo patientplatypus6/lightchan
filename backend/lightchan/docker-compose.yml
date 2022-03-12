@@ -2,6 +2,7 @@ version: "3.9"
 
 volumes:
   volume1:
+  data_volume:
 
 services:
   db:
@@ -9,7 +10,7 @@ services:
     restart: always
     volumes:
       - ./docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data/db:/var/lib/postgresql/data
+      - data_volume:/var/lib/postgresql/data
     environment:
       - POSTGRES_NAME=dev-postgres
       - POSTGRES_USER=pixel

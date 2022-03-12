@@ -188,6 +188,7 @@ def comment(request, comment_id):
   elif request.method == 'POST':
 
     logging.info('inside POST for comment')
+    logging.info('test reup server')
 
     util = utilities.Utilites()
 

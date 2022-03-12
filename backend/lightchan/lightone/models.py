@@ -3,12 +3,12 @@ from django.db import models
 from . import utilities
 import uuid
 
-# class Board(models.Model):
-#   id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#   name = models.TextField()
-#   description = models.TextField()
-#   nsfw = models.BooleanField()
-#   mnemonic = models.TextField()
+class Board(models.Model):
+  id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+  name = models.TextField()
+  description = models.TextField()
+  nsfw = models.BooleanField()
+  mnemonic = models.TextField()
     
 class Comment(models.Model): 
   id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -19,7 +19,7 @@ class Comment(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   votes = models.IntegerField(default=1)
-  # owner = models.ForeignKey("Board", on_delete=models.CASCADE, null=True)
+  owner = models.ForeignKey("Board", on_delete=models.CASCADE, null=True)
 
 class Reply(models.Model):
   id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -31,3 +31,6 @@ class Reply(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
   votes = models.IntegerField(default=1)
   owner = models.ForeignKey("Comment", on_delete=models.CASCADE, null=True)
+
+
+  

@@ -22,6 +22,16 @@
 # ≈   
 # fswatch -or ../../src | xargs -n1 -I{} docker restart frontend
 
+echo "now deleting prior db instantiation"
+
+# rm -rf data
+# mkdir data
+# cd data
+# mkdir db 
+# chmod 777 db
+# cd ..
+# chmod 777 data
+
 echo "now pruning system"
 docker system prune -f -a --volumes
 echo "docker compose down"
@@ -30,7 +40,3 @@ echo "docker compose build"
 docker compose build 
 echo "docker compose up -d --build"
 docker compose up
-
-# find ../../src | entr sh -c 'docker restart frontend'
-
-# echo "after find entr program"
