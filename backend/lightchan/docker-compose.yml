@@ -39,15 +39,14 @@ services:
     depends_on:
       db:
         condition: service_healthy 
-  watchvolume:
-    build: ../../watchvolume
-    restart: always
-    volumes: 
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - volume1:/code
-    command: sh -c "../entrypointwatch.sh"
-    depends_on:
-      - 'backend'
+  # watchvolume:
+  #   build: ../../watchvolume
+  #   restart: always
+  #   volumes: 
+  #     - '/var/run/docker.sock:/var/run/docker.sock'
+  #     - volume1:/code
+  #   depends_on:
+  #     - 'backend'
   frontend:
     build: ../../
     restart: always
