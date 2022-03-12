@@ -4,7 +4,6 @@ import '../main.css'
 import img404 from '../../images/img404.jpeg'
 import arrow from '../../images/arrow.svg'
 
-
 function ReplyContainer({reply}){
 
   console.log('inside replycontainer and value of reply: ', reply)

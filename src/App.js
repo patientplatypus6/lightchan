@@ -1,10 +1,13 @@
 import './App.css';
+import './pages/main.css';
 
 import Main from "./pages/main"
 import Biography from "./pages/biography"
 import Projects from "./pages/projects"
 import Thread from './pages/thread'
 import Api from './api/api'
+import Sidebar from './pages/components/sidebar'
+import Statsbar from './pages/components/statsbar'
 import Board from './pages/board'
 
 import {
@@ -23,17 +26,24 @@ function App() {
   async function handleNavigate(routename) {
     console.log("value of routename: " + routename)
     navigate("../"+routename);
-  }
+  } 
 
   return (
     <div className='mainbackground'>
-      <Routes> 
-        <Route path="/" element={<Main handleNavigate={handleNavigate} />} />
-        <Route path="/board" element={<Board />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/biography" element={<Biography />} />
-        <Route path="/thread/:threadnumber" element={<Thread />} />
-      </Routes>
+      <div className='wrapper'>
+        <Sidebar/>
+        <Statsbar/>
+        <div className='header welcomebanner'>
+          Welcome to Lightchan!
+        </div>
+        <Routes> 
+          <Route path="/" element={<Main handleNavigate={handleNavigate} />} />
+          <Route path="/board" element={<Board />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/biography" element={<Biography />} />
+          <Route path="/thread/:threadnumber" element={<Thread />} />
+        </Routes>
+      </div>
       <Api/>
     </div>
   );

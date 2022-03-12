@@ -35,13 +35,15 @@ function PostCommentContainer({submitComment, comment}){
 
   return(
     <div className='submitcommentcontainer'>
+      <div className='submitsubheaders'>Title</div>
       <input className='inputval' type="text" value={title} onChange={(e)=>{setTitle(e.target.value)}}></input>
       <br/>
+      <div className='submitsubheaders'>Comment</div>
       <textarea className='textval' type="text" value={content} onChange={(e)=>{setContent(e.target.value)}} />
       <br/>
       <input 
         type='file' 
-        style={{background: 'blue', color: 'black', padding:'5px'}}
+        style={{background: 'lightblue', color: 'black', padding:'5px'}}
         onChange={(e)=>{
           console.log('value of e.target.files;', e.target.files[0])
           setUploadFile(e.target.files[0])

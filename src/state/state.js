@@ -8,6 +8,12 @@ import {
   useRecoilValue,
 } from 'recoil';
 
+//currentBoard / setCurrentBoard
+const board = atom({
+  key: 'board',
+  default: "main"
+})
+
 //vote / setVote
 const voteField = atom({
   key: 'voteField',
@@ -95,6 +101,7 @@ const retrieveAllComments = atom({
 })
 
 export {
+  board,
   voteField,
   voteData,
   uploadFile,

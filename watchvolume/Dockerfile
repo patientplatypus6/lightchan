@@ -12,11 +12,18 @@ WORKDIR /code
 RUN set -ex \
     && DOCKER_FILENAME=https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
     && curl -L ${DOCKER_FILENAME} | tar -C /usr/bin/ -xzf - --strip-components 1 docker/docker
-
+# RUN curl -v -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# RUN ls
+# RUN cd /usr/local/bin/docker-compose
+# RUN cd ..
+# RUN chmod 777 /usr/local/bin/docker-compose
+# RUN ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# RUN docker-compose --version
+# RUN cd ./code
 COPY . /code/
 
 # just to keep docker container from exiting on finishing process
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 
 # RUN docker ps
@@ -26,6 +33,8 @@ COPY . /code/
 # RUN service docker start
 # RUN docker ps
 # RUN docker ps
+
+
 
 
 # RUN apt-get update && \

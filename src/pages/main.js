@@ -98,10 +98,7 @@ function Comment(){
   }, [commentpostresponse])
 
   return(
-    <div style={{textAlign: 'center', width: '100vw'}}>
-      <div className='welcomebanner'>
-        Welcome To Lightchan!
-      </div>
+    <div>
       <PostCommentContainer
         comment={postcomment}
         submitComment={(e)=>{setPostComment(e)}}
@@ -112,7 +109,7 @@ function Comment(){
 
 function Main(props) {
   return (
-    <div className='main'>
+    <div className='board'>
       <Comment/> 
       <CommentList handleNavigate={props.handleNavigate}/>
     </div>

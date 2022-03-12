@@ -68,9 +68,9 @@ function Thread(){
   }, [postreply])
 
   return(
-    <div className='thread'> 
+    <div className='board'> 
       <div className='threadbanner'>
-        Thread {threadnum}  
+        Thread! {threadnum}  
       </div>
       <PostReplyContainer
         reply={postreply}
