@@ -26,28 +26,28 @@ function Sidebar(){
 				CurrentBoard <span style={{fontWeight: 'bold'}}>{currentBoard}</span>
 				<ul className='boards'>
 					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('main')}}>
+						<div className='boardlistitem' onClick={()=>{handleClick('man')}}>
 							Main
 						</div>
 					</li>
 					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('board1')}}>
-								Board 1
+						<div className='boardlistitem' onClick={()=>{handleClick('mus')}}>
+							Music
 						</div>
 					</li>
 					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('board2')}}>
-							Board 2
+						<div className='boardlistitem' onClick={()=>{handleClick('art')}}>
+							Art
 						</div>
 					</li>
 					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('board3')}} >
-							Board 3
+						<div className='boardlistitem' onClick={()=>{handleClick('lit')}} >
+							Literature
 						</div>
 					</li>
 					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('board4')}}>
-							Board 4
+						<div className='boardlistitem' onClick={()=>{handleClick('tec')}}>
+							Technology
 						</div>
 					</li>
 				</ul>

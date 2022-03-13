@@ -11,7 +11,7 @@ import {
 import './main.css';
 import CommentContainer from './components/commentcontainer';
 import PostCommentContainer from './components/postcommentcontainer';
-
+import { board } from '../state/state';
 import {
   commentGetState, 
   commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
@@ -22,6 +22,8 @@ import ReplyContainer from './components/replycontainer';
 function CommentList(props){
 
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
+  const [currentBoard, setCurrentBoard] = useRecoilState(board)
+
 
   useEffect(()=>{
     console.log("*************")
@@ -44,9 +46,9 @@ function CommentList(props){
             <CommentContainer
               showthread={true}
               handleNavigate={()=>{
-                props.handleNavigate('thread/'+cr.comment.fields.clean_id)
+                props.handleNavigate(+cr.comment.fields.clean_id)
               }}
-              comment={cr.comment.fields}
+              comment={currentBoard + '/' + cr.comment.fields}
             />
             <br/>
             <div style={{marginLeft: '5vw'}}>

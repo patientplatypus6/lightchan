@@ -4,7 +4,6 @@ from importlib.metadata import files
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
-import os
 from lightone.models import *
 from . import utilities
 
@@ -13,11 +12,70 @@ from django.core.files.storage import FileSystemStorage
 
 import logging
 
-def retrieve_comments_replies(index):
-  comments = Comment.objects.all().order_by('-created_at')
-  logging.info("value of comments %s, ", comments)
+def vote_handler(request, id, type_val):
+  util = utilities.Utilites()
+  body = json.loads(request.body)
+
+  upvote = body['upvote']
+  downvote = body['downvote']
+  votedelta = upvote*1+downvote*-1
+  votename = "upvote" if upvote else "downvote"
+  votedelta_sess = str(id)+"vote"
+  votename_sess = str(id)+"votename"
+
+  def set_votes(votedelta, votename):
+    request.session[votedelta_sess] = votedelta
+    request.session[votename_sess] = votename
+    request.session[str(id)+"/vote/"+votename] = votedelta
+    if type_val == 'comment':
+      comment = Comment.objects.all().filter(clean_id=id)[0]
+      comment.votes = comment.votes + votedelta
+      comment.save()
+      return comment
+    elif type_val == 'reply':
+      reply = Reply.objects.all().filter(clean_id=id)[0]
+      reply.votes = reply.votes + votedelta
+      reply.save()
+      return reply
+
+  try: 
+    prev_name = request.session[votename_sess]
+    
+    if prev_name == "upvote" and upvote:
+      logging.info("if 1")
+      votename = "base"
+      votedelta = -1
+    elif prev_name == "upvote" and downvote:
+      logging.info("if 2")
+      votename = "downvote"
+      votedelta = -2
+    elif prev_name == "downvote" and upvote:
+      logging.info("if 3")
+      votename = "upvote"
+      votedelta = 2
+    elif prev_name == "downvote" and downvote:
+      logging.info("if 4")
+      votename = "base"
+      votedelta = 1
+    elif prev_name == "base" and upvote:
+      logging.info("if 5")
+      votename = "upvote"
+      votedelta = 1
+    elif prev_name == "base" and downvote:
+      logging.info("if 6")
+      votename = 'downvote'
+      votedelta = -1
+    
+    return_comment_reply = set_votes(votedelta, votename)
+    return util.jsonresponse({'votes': return_comment_reply.votes})
+  except: 
+    return_comment_reply = set_votes(votedelta, votename)
+    return util.jsonresponse({'votes': return_comment_reply.votes})
+
+def retrieve_comments_replies(index, board_mnemonic):
+  # parent_board = Board.objects.all().filter(mnemonic=board_mnemonic)
+  comments = Comment.objects.all().filter(owner_id=board_mnemonic).order_by('-created_at')
   comment_data = json.loads(serializers.serialize('json', comments))
-  logging.info("value of comment_data: %s ", comment_data)
  
   return_data = []
   count = 0
@@ -55,38 +113,25 @@ def retrieve_comment_replies(comment_id):
   
   return return_data
 
-def write_file(request):
-  util = utilities.Utilites()
-  image_property = request.FILES.get('image')
-  _, file_extension = os.path.splitext(image_property.name)
-  file_name = str(util.getdatetime())+file_extension
-  file_path = "../static/" + file_name
-  image_path = os.path.join(os.path.dirname(__file__), file_path)
-  logging.info("value of image_path: %s", image_path)
-  logging.info("value of file_name: %s", file_name)
-  with open(image_path, "wb") as f:
-    f.write(image_property.file.read())
-  return file_name
-
-def index(request):
-  return HttpResponse("Hello light one.")
-
 def reply(request, incoming_id):
   util = utilities.Utilites()
+  if request.method == 'PUT':
+    vote_handler(request, incoming_id, "reply")
+
   if request.method=="POST":
     
     all_comments = Comment.objects.all()
     parentuuid = ""
     for comment in all_comments: 
-      parentuuid = comment.id if comment.clean_id == str(incoming_id) else ""
-
-    logging.info('value of parentuuid: %s', parentuuid)
+      if comment.clean_id == str(incoming_id):
+        parentuuid = comment.id
+        break
     
     docjson = json.loads(request.FILES.get('document').read())
     title = docjson['title']
     content = docjson['content']
 
-    file_name = write_file(request)
+    file_name = util.write_file(request)
 
     try:
       reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
@@ -100,86 +145,21 @@ def reply(request, incoming_id):
     except:  
       return util.jsonresponse({"exception": "there was some exception"})
     
-def comments(request):
-  logging.info("inside comments")
-  logging.info("value of request %s", request)
+def comments(request, board_mnemonic):
   util = utilities.Utilites()
 
   if request.method == 'GET':
-    logging.info('inside GET')
-    return_data = retrieve_comments_replies(3)
+    return_data = retrieve_comments_replies(3, board_mnemonic)
     return util.jsonresponse(return_data)
   
   return util.jsonresponse({"exception": "some error occurred"})
 
 
 def comment(request, comment_id):
-
-  logging.info("inside read_comment param")
-  logging.info("value of request %s", 
-  request)
   util = utilities.Utilites()
 
   if request.method == 'PUT':
-
-    body = json.loads(request.body)
-    
-    upvote = body['upvote']
-    downvote = body['downvote']
-    votedelta = upvote*1+downvote*-1
-    votename = "upvote" if upvote else "downvote"
-    
-    votedelta_sess = str(comment_id)+"vote"
-    votename_sess = str(comment_id)+"votename"
-    
-    def set_votes(votedelta, votename):
-      request.session[votedelta_sess] = votedelta
-      request.session[votename_sess] = votename
-      request.session[str(comment_id)+"/vote/"+votename] = votedelta
-      comment = Comment.objects.all().filter(clean_id=comment_id)[0]
-      comment.votes = comment.votes + votedelta
-      comment.save()
-      return comment
-    
-    try: 
-      prev_name = request.session[votename_sess]
-      
-      logging.info("value of prev_name: %s", prev_name)
-      logging.info("value of upvote: %s", upvote)
-      logging.info("value of downvote: %s", downvote)
-      
-      if prev_name == "upvote" and upvote:
-        logging.info("if 1")
-        votename = "base"
-        votedelta = -1
-      elif prev_name == "upvote" and downvote:
-        logging.info("if 2")
-        votename = "downvote"
-        votedelta = -2
-      elif prev_name == "downvote" and upvote:
-        logging.info("if 3")
-        votename = "upvote"
-        votedelta = 2
-      elif prev_name == "downvote" and downvote:
-        logging.info("if 4")
-        votename = "base"
-        votedelta = 1
-      elif prev_name == "base" and upvote:
-        logging.info("if 5")
-        votename = "upvote"
-        votedelta = 1
-      elif prev_name == "base" and downvote:
-        logging.info("if 6")
-        votename = 'downvote'
-        votedelta = -1
-      
-      comment = set_votes(votedelta, votename)
-      
-      return util.jsonresponse({'votes': comment.votes})
-    except: 
-      logging.info('User has not voted yet - ')
-      comment = set_votes(votedelta, votename)
-      return util.jsonresponse({'votes': comment.votes})
+    vote_handler(request, comment_id, "comment")
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)
@@ -187,25 +167,20 @@ def comment(request, comment_id):
 
   elif request.method == 'POST':
 
-    logging.info('inside POST for comment')
-    logging.info('test reup server')
-
     util = utilities.Utilites()
 
     files = request.FILES.get('document')
-    logging.info("value of files %s, ", files)
     docstring = request.FILES.get('document').read()
     docjson = json.loads(docstring)
     title = docjson['title']
     content = docjson['content']
+    board_mnemonic = docjson['board_mnemonic']
 
-    logging.info("~~~NOW WRITING IMAGE TO FILE~~~")
-    x = 3
-    logging.info("~~~NOW WRITING IMAGE TO FILE~~~")
-    logging.info("testy test; %s", x)
-    file_name = write_file(request)
+    file_name = util.write_file(request)
 
-    comment = Comment.objects.create(title=title, content=content, file_name=file_name)
+    # parent_board = Reply.objects.all().filter(mnemonic=board_mnemonic)
+
+    comment = Comment.objects.create(title=title, content=content, file_name=file_name, owner_id=board_mnemonic)
     comment.clean_id = int(util.filterid(str(comment.id)))
     comment.save()
     

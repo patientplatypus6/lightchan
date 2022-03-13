@@ -5,8 +5,8 @@ import uuid
 
 class Board(models.Model):
   id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-  name = models.TextField()
-  description = models.TextField()
+  board_name = models.TextField()
+  board_description = models.TextField()
   nsfw = models.BooleanField()
   mnemonic = models.TextField()
     

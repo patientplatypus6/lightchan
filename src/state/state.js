@@ -11,7 +11,7 @@ import {
 //currentBoard / setCurrentBoard
 const board = atom({
   key: 'board',
-  default: "main"
+  default: "man"
 })
 
 //vote / setVote

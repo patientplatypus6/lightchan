@@ -14,6 +14,7 @@ import { testPost } from '../api/fetch';
 import { getCookie } from '../utilities/utilities';
 
 import {
+  board,
   uploadFile,
   replyGetState, 
   replyPostState,
@@ -31,6 +32,7 @@ import {
 
 function Api(){
 
+  const [currentBoard, setCurrentBoard] = useRecoilState(board)
   const [vote, setVote] = useRecoilState(voteField)
   const [votedatum, setVoteData] = useRecoilState(voteData)
   const [uploadfile, setUploadFile] = useRecoilState(uploadFile);
@@ -61,7 +63,7 @@ function Api(){
     setUploadFile(null)
     var obj = {}
     if(kind=='comment'){
-      obj = {title: postcomment.title, content: postcomment.content}
+      obj = {title: postcomment.title, content: postcomment.content, board_mnemonic: currentBoard}
     }else if(kind=='reply'){
       obj = {title: postreply.title, content: postreply.content, comment_id: postreply.comment_id}
     }
@@ -131,8 +133,9 @@ function Api(){
 
   useEffect(()=>{
     if(commentretrieveall.submit){
+      var url = "http://localhost:8000/lightone/comments/" + currentBoard + "/"
       axios.get(
-        "http://localhost:8000/lightone/comments/"
+        url
       )
       .then(response=>{
         console.log("*************************************")

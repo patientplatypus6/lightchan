@@ -1,34 +1,15 @@
 # Lightchan Project
 
+This is an open source image board. What I want to do here is create image board software that is relatively easy to understand and set up, runs using the latest GUI interface (using React), and is open source so that it can be modified and built upon by the community. The reason that this project exists is that there are both numerous image boards (such as 4chan, 8chan etc) that are anonymous by design, but the software is either old or deprecated. There is not much in the way of development in this area. On the other end of the spectrum there are social media sites such as Reddit and Facebook that are large, rely on a reputation system, and have closed source software. People are at the mercy of algorithms they often do not understand in order to drive profits for major companies. 
 
-This is a new piece of image board software that I am starting to work on. It's just starting and I'm making the project public as I work. If anyone wants to help or contribute send me a message and I'll invite you to the repo. 
 
-## Why New Image Board Software
+This software is a standalone piece of programming that anyone can build and create their own image board, and with a little knowledge of programming can customize their image board to their liking. In the future it may be possible to link these image boards together to share data, all with the understanding that the final product would be not-for-profit, anonymous, and not driven by an AI designed to maximize revenue.
 
-The current host of image board software either uses outdated software, is firmly established (4chan), or is no longer in active development. Other social media websites are not made on an anonymous basis and rely on logged in users. It's my belief that it's possible to make a new image board using more recent software (in this case React and Python) in a way that will be appealing.
+The only knowledge that is required to build and run this software should be a base understanding of Python/Django, a base understanding of React, and a base understanding of how Docker and Docker Compose can spin up the two applications. NGINX is used to run and host pictures. In the future it *may* be desireable to host micro services for added functionality in other languages, or to create a sharded database system, but for the moment the code is simple by design.
 
-## The Path Forward
+In order to run this project cc into `lightchan/backend/` (where the `docker-compose.yml` file is located) and `sudo run.sh`. This project has been created on mac using Docker for Mac, so if you are instead using docker for linux or are running on a linux cloud provider run the following commands: 
 
-After creating basic functionality the site will go live with a single board. User input will be asked for on a rolling basis to improve the functionality of the site.
+`sudo docker system prune -a -f --volumes`
+`sudo docker-compose build`
+`sudo docker-compose up`
 
-## License
-
-Anyone can clone and use the project so long as you don't sell the software for money. Thanks!
-
-### Current Functionality
-
-![front page](./frontpage.png "The Front Page")
-
-Here is a front page with comments.
-
-![comment thread](./thread.png "A Comment Thread")
-
-A thread can be replied to.
-
-![add picture functionality](./commentimage.png "Add Picture Functionality")
-
-Can now add and display images for comments (formatting forthcoming)
-
-![formattedpics](./formattedpics.png "Add Formatted Pics")
-
-Pic handling formatted and replies now work

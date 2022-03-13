@@ -1,6 +1,6 @@
-FROM node:13.12.0-alpine
+FROM node:latest
 
-WORKDIR     /app
+WORKDIR /app
 
 ENV PATH /app/node_modules/.bin:$PATH
 

@@ -38,10 +38,8 @@ function App() {
         </div>
         <Routes> 
           <Route path="/" element={<Main handleNavigate={handleNavigate} />} />
-          <Route path="/board" element={<Board />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/biography" element={<Biography />} />
-          <Route path="/thread/:threadnumber" element={<Thread />} />
+          <Route path="/:boardname" element={<Main handleNavigate={handleNavigate} />} />
+          <Route path="/:boardname/:threadnumber" element={<Thread />} />
         </Routes>
       </div>
       <Api/>

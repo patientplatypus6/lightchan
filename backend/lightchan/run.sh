@@ -34,9 +34,9 @@ echo "now deleting prior db instantiation"
 
 echo "now pruning system"
 docker system prune -f -a --volumes
-echo "docker compose down"
-docker compose down --volumes
-echo "docker compose build"
-docker compose build 
-echo "docker compose up -d --build"
-docker compose up
+# echo "docker compose down"
+# docker compose down --volumes
+# echo "docker compose build"
+# docker compose build 
+echo "docker compose up --build"
+docker compose up --build
