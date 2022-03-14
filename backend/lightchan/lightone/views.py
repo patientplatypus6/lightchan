@@ -13,6 +13,9 @@ from django.core.files.storage import FileSystemStorage
 import logging
 
 def vote_handler(request, id, type_val):
+
+  logging.info("inside vote_handler")
+
   util = utilities.Utilites()
   body = json.loads(request.body)
 
@@ -24,19 +27,20 @@ def vote_handler(request, id, type_val):
   votename_sess = str(id)+"votename"
 
   def set_votes(votedelta, votename):
+    logging.info("inside set_votes")
+    logging.info("value of type_val %s: ", type_val)
     request.session[votedelta_sess] = votedelta
     request.session[votename_sess] = votename
     request.session[str(id)+"/vote/"+votename] = votedelta
+
     if type_val == 'comment':
-      comment = Comment.objects.all().filter(clean_id=id)[0]
-      comment.votes = comment.votes + votedelta
-      comment.save()
-      return comment
+      type_obj = Comment.objects.all().filter(clean_id=id)[0]
     elif type_val == 'reply':
-      reply = Reply.objects.all().filter(clean_id=id)[0]
-      reply.votes = reply.votes + votedelta
-      reply.save()
-      return reply
+      type_obj = Reply.objects.all().filter(clean_id=id)[0]
+    new_votes = type_obj.votes + votedelta
+    type_obj.votes = new_votes
+    type_obj.save()
+    return new_votes
 
   try: 
     prev_name = request.session[votename_sess]
@@ -65,12 +69,16 @@ def vote_handler(request, id, type_val):
       logging.info("if 6")
       votename = 'downvote'
       votedelta = -1
-    
-    return_comment_reply = set_votes(votedelta, votename)
-    return util.jsonresponse({'votes': return_comment_reply.votes})
+
+    logging.info("before return_comment_reply")
+    new_votes = set_votes(votedelta, votename)
+    logging.info("value of return_comment_reply: %s", new_votes)
+    # return util.jsonresponse({'votes': new_votes})
+    return new_votes
   except: 
-    return_comment_reply = set_votes(votedelta, votename)
-    return util.jsonresponse({'votes': return_comment_reply.votes})
+    new_votes = set_votes(votedelta, votename)
+    # return util.jsonresponse({'votes': new_votes})
+    return new_votes
 
 def retrieve_comments_replies(index, board_mnemonic):
   board_val = Board.objects.all().filter(mnemonic=board_mnemonic)[0]
@@ -116,7 +124,9 @@ def retrieve_comment_replies(comment_id):
 def reply(request, incoming_id):
   util = utilities.Utilites()
   if request.method == 'PUT':
-    vote_handler(request, incoming_id, "reply")
+    new_votes = vote_handler(request, incoming_id, "reply")
+    logging.info('value of new_votes before return: %s', new_votes)
+    return util.jsonresponse({'votes': new_votes})
 
   if request.method=="POST":
     
@@ -159,7 +169,9 @@ def comment(request, comment_id):
   util = utilities.Utilites()
 
   if request.method == 'PUT':
-    vote_handler(request, comment_id, "comment")
+    new_votes = vote_handler(request, comment_id, "comment")
+    logging.info('value of new_votes before return: %s', new_votes)
+    return util.jsonresponse({'votes': new_votes})
 
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)
