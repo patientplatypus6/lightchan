@@ -7,5 +7,6 @@ from . import views
 urlpatterns = [
   path('comment/<int:comment_id>/', views.comment, name='comment'),
   path('comments/<slug:board_mnemonic>/', views.comments, name='comments'),
-  path('reply/<int:incoming_id>/', views.reply, name='reply')
+  path('reply/<int:incoming_id>/', views.reply, name='reply'),
+  path('boards/', views.boards, name='boards')
 ]

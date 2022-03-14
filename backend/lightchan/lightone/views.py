@@ -183,6 +183,12 @@ def comments(request, board_mnemonic):
   
   return util.jsonresponse({"exception": "some error occurred"})
 
+def boards(request):
+  util = utilities.Utilites()
+  if request.method == "GET":
+    boards = Board.objects.all()
+    boards_data = json.loads(serializers.serialize('json', boards))
+    return util.jsonresponse(boards_data)
 
 def comment(request, comment_id):
   util = utilities.Utilites()

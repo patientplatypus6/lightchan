@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'lightone.middleware.every_request'
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL= True
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
@@ -76,21 +77,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://*"
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*", 
-    "http://localhost:3000", 
-    "http://*"
-]
-
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT'
-]
-
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
@@ -102,8 +88,23 @@ CORS_ALLOW_HEADERS = [
     'origin',
     'user-agent',
     'x-csrftoken',
-    'Access-Control-Allow-Origin',
+    'access-control-allow-origin',
     'x-requested-with'
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*", 
+    "http://localhost:3000", 
+    "http://*"
 ]
 
 ROOT_URLCONF = 'lightchan.urls'

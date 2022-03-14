@@ -32,6 +32,18 @@ def handle_clean():
     if dif > 10000:
       comment.delete()  
 
+def inspect(request):
+  logging.info("request.path: %s", request.path)
+  # logging.info("request.pathinfo: %s", request.pathinfo)
+  logging.info("request.method: %s", request.method)
+  logging.info("request.content_type %s", request.content_type)
+  logging.info("request.content_params %s", request.content_params)
+  logging.info("request.COOKIES %s", request.COOKIES)
+  logging.info("request.META %s", request.META)
+  logging.info("request.headers %s", request.headers)
+
+  
+
 def every_request(get_response):
 
   def middleware(request):
@@ -40,6 +52,7 @@ def every_request(get_response):
     logging.info('inside the every_request middleware')
     handle_clean()
     token_handler(request)
+    inspect(request)
     logging.info("MIDDLEWARE")
     response = get_response(request)
 
