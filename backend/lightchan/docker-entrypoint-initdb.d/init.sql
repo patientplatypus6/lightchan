@@ -2,26 +2,27 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 DROP DATABASE IF EXISTS lightchan;
 CREATE DATABASE lightchan;
 
-CREATE TABLE board (
-    id TEXT NOT NULL
+CREATE TABLE Board (
+    id TEXT NOT NULL UNIQUE,
     board_name TEXT,
     board_description TEXT,
     nsfw Boolean,
-    mnemonic TEXT
+    PRIMARY KEY (id), 
+    mnemonic TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO board (id, board_name, board_description, nsfw, mnemonic) VALUES ('man', 'main', 'General Discussion', false, 'man');
+-- INSERT INTO Board (id, board_name, board_description, nsfw, mnemonic) VALUES ('man', 'main', 'General Discussion', false, 'man');
 
-INSERT INTO board (id, board_name, board_description, nsfw, mnemonic) VALUES ('mus', 'music', 'Music, Bands, Concerts', false, 'mus');
+-- INSERT INTO Board (id, board_name, board_description, nsfw, mnemonic) VALUES ('mus', 'music', 'Music, Bands, Concerts', false, 'mus');
 
-INSERT INTO board (id, board_name, board_description, nsfw, mnemonic) VALUES ('art', 'art', 'Art and Artists', false, 'art');
+-- INSERT INTO Board (id, board_name, board_description, nsfw, mnemonic) VALUES ('art', 'art', 'Art and Artists', false, 'art');
 
-INSERT INTO board (id, board_name, board_description, nsfw, mnemonic) VALUES ('lit', 'literature', 'All Things Literature', false, 'lit');
+-- INSERT INTO Board (id, board_name, board_description, nsfw, mnemonic) VALUES ('lit', 'literature', 'All Things Literature', false, 'lit');
 
-INSERT INTO board (id, board_name, board_description, nsfw, mnemonic) VALUES ('tec', 'technology', 'Technology Discussion', false, 'tec');
+-- INSERT INTO Board (id, board_name, board_description, nsfw, mnemonic) VALUES ('tec', 'technology', 'Technology Discussion', false, 'tec');
 
-CREATE TABLE comment (
-    id uuid DEFAULT uuid_generate_v4 (),
+CREATE TABLE Comment (
+    id uuid DEFAULT uuid_generate_v4 () UNIQUE,
     clean_id TEXT NOT NULL,
     title TEXT,
     content TEXT,
@@ -30,13 +31,14 @@ CREATE TABLE comment (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     votes INT NOT NULL,
     PRIMARY KEY (id),
+    mnemonic TEXT NOT NULL,
     CONSTRAINT fk_owner
-      FOREIGN KEY(id) 
-	    REFERENCES board(id)
+      FOREIGN KEY(mnemonic) 
+	    REFERENCES board(mnemonic)
 );
 
-CREATE TABLE reply (
-    id uuid DEFAULT uuid_generate_v4 (),
+CREATE TABLE Reply (
+    id uuid DEFAULT uuid_generate_v4 () UNIQUE,
     clean_id TEXT NOT NULL,
     title TEXT,
     content TEXT,

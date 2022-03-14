@@ -73,8 +73,8 @@ def vote_handler(request, id, type_val):
     return util.jsonresponse({'votes': return_comment_reply.votes})
 
 def retrieve_comments_replies(index, board_mnemonic):
-  # parent_board = Board.objects.all().filter(mnemonic=board_mnemonic)
-  comments = Comment.objects.all().filter(owner_id=board_mnemonic).order_by('-created_at')
+  board_val = Board.objects.all().filter(mnemonic=board_mnemonic)[0]
+  comments = Comment.objects.all().filter(owner=board_val).order_by('-created_at')
   comment_data = json.loads(serializers.serialize('json', comments))
  
   return_data = []
@@ -169,6 +169,8 @@ def comment(request, comment_id):
 
     util = utilities.Utilites()
 
+    logging.info("inside comment POST")
+
     files = request.FILES.get('document')
     docstring = request.FILES.get('document').read()
     docjson = json.loads(docstring)
@@ -176,15 +178,21 @@ def comment(request, comment_id):
     content = docjson['content']
     board_mnemonic = docjson['board_mnemonic']
 
-    file_name = util.write_file(request)
+    logging.info("before writefile handler")
+    image_property = request.FILES.get('image')
+    logging.info("value of image_property: %s", image_property)
+    logging.info("value of image_property.name: %s", image_property.name)
 
-    # parent_board = Reply.objects.all().filter(mnemonic=board_mnemonic)
+    file_name = util.write_file(request)    
+    board_val = Board.objects.all().filter(mnemonic=board_mnemonic)[0]
+    comment = Comment.objects.create(title=title, content=content, file_name=file_name, owner=board_val)
 
-    comment = Comment.objects.create(title=title, content=content, file_name=file_name, owner_id=board_mnemonic)
+    logging.info("value of comment %s; ", comment)
+
     comment.clean_id = int(util.filterid(str(comment.id)))
     comment.save()
     
-    return_data = retrieve_comments_replies(3)
+    return_data = retrieve_comments_replies(3, board_mnemonic)
 
     return util.jsonresponse(return_data)
 

@@ -2,6 +2,9 @@ import re
 import datetime
 from django.http.response import JsonResponse
 import os
+from django.core.files.storage import FileSystemStorage
+
+import logging
 
 class Utilites():
   def getdatetime(self):  
@@ -16,7 +19,10 @@ class Utilites():
   def filterid(self, id):
     return re.sub('[abcdef()-]', '', str(id))
   def write_file(self, request):
+    logging.info("inside the write_file handler in util")
     image_property = request.FILES.get('image')
+    logging.info("value of image_property: %s", image_property)
+    logging.info("value of image_property.name: %s", image_property.name)
     _, file_extension = os.path.splitext(image_property.name)
     file_name = str(self.getdatetime())+file_extension
     file_path = "../static/" + file_name

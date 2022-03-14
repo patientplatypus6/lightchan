@@ -11,7 +11,7 @@ from django.middleware.csrf import get_token
 
 
 def token_handler(request):
-  logging.info("inside token handler")
+  logging.info("inside token_handler")
   try:
     logging.info("csrftoken: %s", request.session['csrftoken'])
   except:
@@ -19,8 +19,10 @@ def token_handler(request):
     request.COOKIES['csrftoken'] = get_token(request)
 
 def handle_clean():
+  logging.info("inside handle_clean")
   comments = Comment.objects.all()
   for comment in comments:
+    logging.info("value of comment: %s", comment)
     timestamp_now = datetime.datetime.now().timestamp()
     timestamp_db = datetime.datetime.timestamp(comment.created_at)
     dif = timestamp_now - timestamp_db
