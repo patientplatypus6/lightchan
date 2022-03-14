@@ -91,16 +91,10 @@ function Api(){
         formdata
       )
       .then(response=>{
-        // console.log("*************************************")
-        // console.log("here is the response: ", response)
-        // console.log("*************************************")
         setCommentPostResponse({response});
         setPostComment({title: '', content: '', submit: false})
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
         setCommentPostResponse({response});
         setPostComment({title: '', content: '', submit: false})
       })
@@ -122,9 +116,6 @@ function Api(){
         setGetComment({id: '', submit: false})
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
         setCommentGetResponse({comment: {}, replies: []});
         setGetComment({id: '', submit: false})  
       })
@@ -132,8 +123,10 @@ function Api(){
   }, [getcomment])
 
   useEffect(()=>{
+    console.log("&&&*** inside useEffect for commentretrieveall and value of currentBoard: ", currentBoard)
     if(commentretrieveall.submit){
       var url = "http://localhost:8000/lightone/comments/" + currentBoard + "/"
+      console.log('&&&*** value of url before send: ', url)
       axios.get(
         url
       )
@@ -150,7 +143,7 @@ function Api(){
         setCommentRetrieveAll({submit: false, response});
       })
     }
-  }, [commentretrieveall])
+  }, [commentretrieveall, currentBoard])
 
   useEffect(()=>{
     if(postreply.submit){
@@ -160,9 +153,6 @@ function Api(){
         formdata
       )
       .then(response=>{
-        // console.log("*************************************")
-        // console.log("here is the response: ", response)
-        // console.log("*************************************")
         setCommentGetResponse({
           comment: response.data.comment, 
           replies: response.data.replies
@@ -170,9 +160,6 @@ function Api(){
         setPostReply({title: "", content: "", comment_id: "", submit:false})
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
         setPostReply({title: "", content: "", comment_id: "", submit:false})
       })
     }
@@ -185,15 +172,9 @@ function Api(){
         "http://localhost:8000/lightone/replies/"+replyretrieveallbyid.comment_id+"/"
       )
       .then(response=>{
-        // console.log("*************************************")
-        // console.log("here is the response: ", response)
-        // console.log("*************************************")
         setReplyRetrieveAllByID({submit: false, comment_id, response})
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
         setReplyRetrieveAllByID({submit: false, comment_id, response})
       })
     }
@@ -236,10 +217,6 @@ function Api(){
 
       })
       .catch(response=>{
-        // console.log("*************************************")
-        // console.log('there was an error: ', response)
-        // console.log("*************************************")
-
         setVote({
           upvote: false, 
           downvote: false, 

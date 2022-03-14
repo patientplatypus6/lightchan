@@ -2,13 +2,10 @@ import './App.css';
 import './pages/main.css';
 
 import Main from "./pages/main"
-import Biography from "./pages/biography"
-import Projects from "./pages/projects"
 import Thread from './pages/thread'
 import Api from './api/api'
 import Sidebar from './pages/components/sidebar'
 import Statsbar from './pages/components/statsbar'
-import Board from './pages/board'
 
 import {
   Routes, 
@@ -31,7 +28,11 @@ function App() {
   return (
     <div className='mainbackground'>
       <div className='wrapper'>
-        <Sidebar/>
+        <Sidebar
+          handleNavigate={(board)=>{
+            handleNavigate(board)
+          }}
+        />
         <Statsbar/>
         <div className='header welcomebanner'>
           Welcome to Lightchan!

@@ -13,11 +13,10 @@ import {
 } from "react-router-dom";
 
 import {
-  retrieveAllRepliesByID, 
-  replyGetState, 
   replyPostState,
   commentGetState, 
-  commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
+  board,
+  commentGetResponse
 } from '../state/state'
 
 import './thread.css'
@@ -27,7 +26,6 @@ import PostCommentContainer from './components/postcommentcontainer';
 import CommentContainer from './components/commentcontainer';
 import ReplyContainer from './components/replycontainer';
 import PostReplyContainer from './components/postreplycontainer';
-
 
 function ReplyList(){
 
@@ -55,12 +53,13 @@ function Thread(){
   const [postreply, setPostReply] = useRecoilState(replyPostState);
   const [getcomment, setGetComment] = useRecoilState(commentGetState);
   const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
+  const [currentBoard, setCurrentBoard] = useRecoilState(board)
   const [threadnum, setThreadnum] = useState('')
   const location = useLocation();
 
   useEffect(()=>{
-    setThreadnum(location.pathname.replace('/thread/', ''))
-    setGetComment({id: location.pathname.replace("/thread/", ""), submit: true})
+    setThreadnum(location.pathname.replace("/"+currentBoard+"/", ''))
+    setGetComment({id: location.pathname.replace("/"+currentBoard+"/", ""), submit: true})
   }, [])
 
   useEffect(()=>{

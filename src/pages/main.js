@@ -46,9 +46,9 @@ function CommentList(props){
             <CommentContainer
               showthread={true}
               handleNavigate={()=>{
-                props.handleNavigate(+cr.comment.fields.clean_id)
+                props.handleNavigate(currentBoard + "/" + cr.comment.fields.clean_id)
               }}
-              comment={currentBoard + '/' + cr.comment.fields}
+              comment={cr.comment.fields}
             />
             <br/>
             <div style={{marginLeft: '5vw'}}>
@@ -79,7 +79,7 @@ function Comment(){
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
 
   const retrieveComments = () => {
-    console.log('inside set retrieve Comments')
+    console.log('&&&*** inside set retrieve Comments')
     setCommentRetrieveAll({
       submit: true,
       response: {}
@@ -87,7 +87,7 @@ function Comment(){
   }
 
   useEffect(()=>{
-    console.log('inside useEffect in Comment to Retrieve all comments')
+    console.log('&&&*** inside useEffect[] in Main.js')
     retrieveComments()
   }, [])  
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../main.css'
 import {
   RecoilRoot,
@@ -43,6 +43,7 @@ function PostCommentContainer({submitComment, comment}){
       <br/>
       <input 
         type='file' 
+        accept='image/*'
         style={{background: 'lightblue', color: 'black', padding:'5px'}}
         onChange={(e)=>{
           console.log('value of e.target.files;', e.target.files[0])

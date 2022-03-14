@@ -8,16 +8,30 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { board } from '../../state/state';
+import { board, retrieveAllComments } from '../../state/state';
 
-function Sidebar(){
+function Sidebar(props){
 
 	const [currentBoard, setCurrentBoard] = useRecoilState(board);
+	const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
 
   console.log("inside the sidebar!")
 
+	useEffect(()=>{
+		props.handleNavigate(currentBoard)
+	}, [commentretrieveall])
+
+  const retrieveComments = () => {
+    console.log('&&&*** inside set retrieve Comments')
+    setCommentRetrieveAll({
+      submit: true,
+      response: {}
+    })
+  }
+
 	const handleClick = (nme) => {
 		setCurrentBoard(nme)
+		retrieveComments()
 	}
 
   return( 

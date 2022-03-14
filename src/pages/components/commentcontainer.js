@@ -53,6 +53,7 @@ function CommentContainer({comment, handleNavigate, showthread}){
   const picHandler=()=>{
 
     console.log('inside picHandler')
+    console.log('value of comment : ', comment)
 
     if(comment.file_name!=""&&comment.file_name!=undefined){
       if(imgError){
