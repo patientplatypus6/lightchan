@@ -1,6 +1,8 @@
 from email.mime import image
 from fileinput import filename
 from importlib.metadata import files
+from linecache import checkcache
+from tabnanny import check
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 import json    
@@ -9,8 +11,23 @@ from . import utilities
 
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 import logging
+import requests
+
+def check_captcha(request):
+  logging.info("inside check captcha")
+  captcha = request.COOKIES.get("captcha")
+  url = 'https://www.google.com/recaptcha/api/siteverify'
+  myobj = {
+    'secret': settings.RECAPTCHA_KEY,
+    'response': captcha
+  }
+  x = requests.post(url, data = myobj)
+  xjson = x.json()
+  logging.info("value of xjson %s: ", xjson)
+  return xjson['success']
 
 def vote_handler(request, id, type_val):
 
@@ -127,34 +144,36 @@ def reply(request, incoming_id):
     new_votes = vote_handler(request, incoming_id, "reply")
     logging.info('value of new_votes before return: %s', new_votes)
     return util.jsonresponse({'votes': new_votes})
-
   if request.method=="POST":
-    
-    all_comments = Comment.objects.all()
-    parentuuid = ""
-    for comment in all_comments: 
-      if comment.clean_id == str(incoming_id):
-        parentuuid = comment.id
-        break
-    
-    docjson = json.loads(request.FILES.get('document').read())
-    title = docjson['title']
-    content = docjson['content']
+    logging.info("inside reply before captcha_bool")
+    captcha_bool = check_captcha(request)
+    if captcha_bool: 
+      all_comments = Comment.objects.all()
+      parentuuid = ""
+      for comment in all_comments: 
+        if comment.clean_id == str(incoming_id):
+          parentuuid = comment.id
+          break
+      
+      docjson = json.loads(request.FILES.get('document').read())
+      title = docjson['title']
+      content = docjson['content']
 
-    file_name = util.write_file(request)
+      file_name = util.write_file(request)
 
-    try:
-      reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
-      reply.clean_id = int(util.filterid(str(incoming_id)))
-      reply.save()
-      try: 
-        return_replies = retrieve_comment_replies(incoming_id)
-        return util.jsonresponse(return_replies)   
-      except:
-        return util.jsonresponse({"exception": "there was some exception"})   
-    except:  
-      return util.jsonresponse({"exception": "there was some exception"})
-    
+      try:
+        reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
+        reply.clean_id = int(util.filterid(str(incoming_id)))
+        reply.save()
+        try: 
+          return_replies = retrieve_comment_replies(incoming_id)
+          return util.jsonresponse(return_replies)   
+        except:
+          return util.jsonresponse({"exception": "there was some exception"})   
+      except:  
+        return util.jsonresponse({"exception": "there was some exception"})
+    else:
+      return util.jsonresponse({'error': 'captcha invalid'})
 def comments(request, board_mnemonic):
   util = utilities.Utilites()
 
@@ -172,7 +191,6 @@ def comment(request, comment_id):
     new_votes = vote_handler(request, comment_id, "comment")
     logging.info('value of new_votes before return: %s', new_votes)
     return util.jsonresponse({'votes': new_votes})
-
   if request.method == 'GET':  
     return_data = retrieve_comment_replies(comment_id)
     return util.jsonresponse(return_data)
@@ -180,32 +198,36 @@ def comment(request, comment_id):
   elif request.method == 'POST':
 
     util = utilities.Utilites()
+    logging.info("inside POST for comment before captcha bool")
+    captcha_bool = check_captcha(request)
+    if captcha_bool:
+      logging.info("inside comment POST")
 
-    logging.info("inside comment POST")
+      files = request.FILES.get('document')
+      docstring = request.FILES.get('document').read()
+      docjson = json.loads(docstring)
+      title = docjson['title']
+      content = docjson['content']
+      board_mnemonic = docjson['board_mnemonic']
 
-    files = request.FILES.get('document')
-    docstring = request.FILES.get('document').read()
-    docjson = json.loads(docstring)
-    title = docjson['title']
-    content = docjson['content']
-    board_mnemonic = docjson['board_mnemonic']
+      logging.info("before writefile handler")
+      image_property = request.FILES.get('image')
+      logging.info("value of image_property: %s", image_property)
+      logging.info("value of image_property.name: %s", image_property.name)
 
-    logging.info("before writefile handler")
-    image_property = request.FILES.get('image')
-    logging.info("value of image_property: %s", image_property)
-    logging.info("value of image_property.name: %s", image_property.name)
+      file_name = util.write_file(request)    
+      board_val = Board.objects.all().filter(mnemonic=board_mnemonic)[0]
+      comment = Comment.objects.create(title=title, content=content, file_name=file_name, owner=board_val)
 
-    file_name = util.write_file(request)    
-    board_val = Board.objects.all().filter(mnemonic=board_mnemonic)[0]
-    comment = Comment.objects.create(title=title, content=content, file_name=file_name, owner=board_val)
+      logging.info("value of comment %s; ", comment)
 
-    logging.info("value of comment %s; ", comment)
+      comment.clean_id = int(util.filterid(str(comment.id)))
+      comment.save()
+      
+      return_data = retrieve_comments_replies(3, board_mnemonic)
 
-    comment.clean_id = int(util.filterid(str(comment.id)))
-    comment.save()
-    
-    return_data = retrieve_comments_replies(3, board_mnemonic)
-
-    return util.jsonresponse(return_data)
+      return util.jsonresponse(return_data)
+    else:
+      return util.jsonresponse({'error': 'captcha invalid'})
 
   return JsonResponse({'comment_id': comment_id}, safe=False, json_dumps_params={'ensure_ascii': False})

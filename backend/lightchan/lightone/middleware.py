@@ -8,6 +8,8 @@ from django.contrib.sessions.backends.db import SessionStore
 import random
 import logging
 from django.middleware.csrf import get_token
+from django.http.response import JsonResponse
+import requests
 
 
 def token_handler(request):
