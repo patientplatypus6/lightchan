@@ -19,6 +19,9 @@ import {
 } from '../state/state'
 import ReplyContainer from './components/replycontainer';
 
+import {
+  useLocation
+} from 'react-router-dom';
 
 function CommentList(props){
 
@@ -103,9 +106,12 @@ function Comment(props){
 
 function Main(props) {
 
+  const location = useLocation();
+  const [currentBoard, setCurrentBoard] = useRecoilState(board)
+
   useEffect(()=>{
-    console.log('value of props: ', props)
-  })
+    setCurrentBoard(location.pathname.replace("/", ""))
+  }, [])
 
   return (
     <div className='board'>
