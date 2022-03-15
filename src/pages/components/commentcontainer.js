@@ -114,14 +114,6 @@ function CommentContainer({comment, handleNavigate, showthread}){
         {picHandler()}
         <div className='commentcontent'>
           {comment.content}
-          {comment.clean_id}
-          ****
-          {JSON.stringify(votedatum.votes[comment.clean_id])}
-          ****
-          ****
-          {JSON.stringify(votedatum.votes[comment.clean_id]==null)}
-          ****
-          {JSON.stringify(votedatum)}
         </div>
       </div>
     </div>
