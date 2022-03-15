@@ -56,12 +56,15 @@ services:
     stdin_open: true
     tty: true
   nginx:
-    image: nginx
+    build:
+      context: ../../nginx
     restart: always
     ports:
-      - "9000:80"
+      - "80:80"
+      - "443:443" 
     volumes:
       - volume1:/usr/share/nginx/html
     links:
       - "backend"
       - "db"
+      - "frontend"
