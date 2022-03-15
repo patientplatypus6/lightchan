@@ -37,10 +37,6 @@ function Api(){
 
   const location = useLocation()
 
-
-  // ALWAYS CHECK FOR TRAILING SLASHES ON URL WHEN DEBUGGING
-  // THIS IS THE CAUSE OF MOST API ERRORS!!!
-
   const [boardsData, setBoardsData] = useRecoilState(boards)
   const [captchaValue, setCaptchaValue] = useRecoilState(captcha);
   const [currentBoard, setCurrentBoard] = useRecoilState(board)

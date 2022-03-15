@@ -110,7 +110,13 @@ function Main(props) {
   const [currentBoard, setCurrentBoard] = useRecoilState(board)
 
   useEffect(()=>{
+    var boardpath = location.pathname
+    console.log("&&3423 value of location.pathname : ", location.pathname)
+    if(location.pathname=='/'){
+      boardpath = "man"
+    }
     setCurrentBoard(location.pathname.replace("/", ""))
+    console.log("&&3423 value of currentboard: ", currentBoard)
   }, [])
 
   return (

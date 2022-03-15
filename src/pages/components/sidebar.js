@@ -34,7 +34,7 @@ function Sidebar(props){
   return( 
     <div className='nav'>
       <div className='sidebar'>
-				CurrentBoard <span style={{fontWeight: 'bold'}}>{selectorCurrentBoard[0].board_name}</span>
+				CurrentBoard <span style={{fontWeight: 'bold'}}>{currentBoard}</span>
 					{boardsData['response']!=null?
 						<ul className='boards'>
 							{boardsData['response'].map((board, key)=>{
