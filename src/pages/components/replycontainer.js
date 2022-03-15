@@ -24,7 +24,8 @@ function ReplyContainer({reply}){
   console.log('inside replycontainer and value of reply: ', reply)
 
   const voteHandler=(direction)=>{
-    console.log('inside voteHandler')
+    console.log('^^**^^ inside voteHandler')
+    console.log('^^**^^ value of reply inside votehandler', reply)
     var voteobj = {}
     if(direction=='up'){
       voteobj = {

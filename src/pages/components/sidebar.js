@@ -35,9 +35,8 @@ function Sidebar(props){
     <div className='nav'>
       <div className='sidebar'>
 				CurrentBoard <span style={{fontWeight: 'bold'}}>{selectorCurrentBoard[0].board_name}</span>
-				<ul className='boards'>
 					{boardsData['response']!=null?
-						<ul>
+						<ul className='boards'>
 							{boardsData['response'].map((board, key)=>{
 								const boardname = board["mnemonic"]
 								console.log("value of board in loop: ", board)
@@ -51,7 +50,6 @@ function Sidebar(props){
 							})}
 						</ul>
 					:<div/>}
-				</ul>
       </div>
     </div>
   )

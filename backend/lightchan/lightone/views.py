@@ -163,7 +163,7 @@ def reply(request, incoming_id):
 
       try:
         reply = Reply.objects.create(title=title, content=content, owner_id=parentuuid, file_name=file_name)
-        reply.clean_id = int(util.filterid(str(incoming_id)))
+        reply.clean_id = int(util.filterid(str(reply.id)))
         reply.save()
         try: 
           return_replies = retrieve_comment_replies(incoming_id)

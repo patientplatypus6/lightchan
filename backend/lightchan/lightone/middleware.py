@@ -42,8 +42,6 @@ def inspect(request):
   logging.info("request.META %s", request.META)
   logging.info("request.headers %s", request.headers)
 
-  
-
 def every_request(get_response):
 
   def middleware(request):
@@ -52,7 +50,7 @@ def every_request(get_response):
     logging.info('inside the every_request middleware')
     handle_clean()
     token_handler(request)
-    inspect(request)
+    # inspect(request)
     logging.info("MIDDLEWARE")
     response = get_response(request)
 
