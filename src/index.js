@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Api from './api/api';
 import reportWebVitals from './reportWebVitals';
 
 import {
@@ -19,6 +20,7 @@ ReactDOM.render(
     <RecoilRoot>
       <BrowserRouter>
         <App />
+        <Api />
       </BrowserRouter>
     </RecoilRoot>
   </React.StrictMode>,

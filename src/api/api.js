@@ -9,12 +9,15 @@ import {
 } from 'recoil';
 // import {schema} from '../api/api'
 import axios from 'axios';
-import { testPost } from '../api/fetch';
 
 import { getCookie } from '../utilities/utilities';
 
+import { useLocation } from 'react-router-dom';
+
 import {
   board,
+  boards,
+  captcha,
   uploadFile,
   replyGetState, 
   replyPostState,
@@ -32,6 +35,14 @@ import {
 
 function Api(){
 
+  const location = useLocation()
+
+
+  // ALWAYS CHECK FOR TRAILING SLASHES ON URL WHEN DEBUGGING
+  // THIS IS THE CAUSE OF MOST API ERRORS!!!
+
+  const [boardsData, setBoardsData] = useRecoilState(boards)
+  const [captchaValue, setCaptchaValue] = useRecoilState(captcha);
   const [currentBoard, setCurrentBoard] = useRecoilState(board)
   const [vote, setVote] = useRecoilState(voteField)
   const [votedatum, setVoteData] = useRecoilState(voteData)
@@ -53,6 +64,13 @@ function Api(){
     axios.defaults.withCredentials= true;
     axios.defaults.headers.common['X-CSRFTOKEN']=getCookie('csrftoken');    
   }, [])
+
+  useEffect(()=>{
+    if (captchaValue!="--"){
+      document.cookie = "captcha="+captchaValue
+      setCaptchaValue("--")
+    }
+  }, [captchaValue])
 
   const createUploadForm = (kind) => {
 
@@ -77,8 +95,6 @@ function Api(){
 
   useEffect(()=>{
 
-    //might need this: https://stackoverflow.com/questions/47874659/making-an-axios-post-request-with-multipart-form-data-via-react-native-debugger
-
     if(postcomment.submit){
       var formdata = createUploadForm('comment')
       console.log('value of formdata: ', formdata)
@@ -91,8 +107,14 @@ function Api(){
         formdata
       )
       .then(response=>{
-        setCommentPostResponse({response});
-        setPostComment({title: '', content: '', submit: false})
+        console.log("&&&^^^ value of response in postcomment: ", response)
+        console.log("&&&^^^ response.data.hasOwnProperty(error)", response.data.hasOwnProperty("error"))
+        if(response.data.hasOwnProperty("error") && response.data.error=="captcha invalid"){
+          alert("Invalid captcha, please try again")
+        }else{
+          setCommentPostResponse({response});
+          setPostComment({title: '', content: '', submit: false})
+        }
       })
       .catch(response=>{
         setCommentPostResponse({response});
@@ -123,10 +145,51 @@ function Api(){
   }, [getcomment])
 
   useEffect(()=>{
-    console.log("&&&*** inside useEffect for commentretrieveall and value of currentBoard: ", currentBoard)
+    console.log("&&&888 inside the boardsData useeffect")
+    // axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    // axios.defaults.xsrfCookieName = "csrftoken";
+    axios.defaults.withCredentials= true;
+    // axios.defaults.headers.common['X-CSRFTOKEN']=getCookie('csrftoken'); 
+    console.log("getCookie csrftoken: ", getCookie('csrftoken'))
+    if(boardsData.submit){
+        var url = "http://localhost:8000/lightone/boards/"
+        axios.get(
+          url, { withCredentials: true }
+        )
+        .then(response=>{
+          console.log("&&&888 value of response from boards: ", response)
+          var savearray = []
+          response.data.forEach(element => {
+            savearray.push(element.fields)
+          });
+          setBoardsData({submit:false, response:savearray})
+        })
+        .catch(response=>{
+          console.log("&&&888 value of error from boards: ", response)
+        })
+    }
+  }, [boardsData])
+
+  useEffect(()=>{
+
+    console.log('&&&& inside commentretrieveall &&&&')
+    console.log()
+
+    var path = location.pathname
+    if(location.pathname=='/'){
+      path = "/man"
+    }
+
     if(commentretrieveall.submit){
-      var url = "http://localhost:8000/lightone/comments/" + currentBoard + "/"
+      
+      var url = "http://localhost:8000/lightone/comments" + path + '/'
       console.log('&&&*** value of url before send: ', url)
+
+      axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+      axios.defaults.xsrfCookieName = "csrftoken";
+      axios.defaults.withCredentials= true;
+      axios.defaults.headers.common['X-CSRFTOKEN']=getCookie('csrftoken');   
+
       axios.get(
         url
       )
@@ -143,7 +206,7 @@ function Api(){
         setCommentRetrieveAll({submit: false, response});
       })
     }
-  }, [commentretrieveall, currentBoard])
+  }, [commentretrieveall])
 
   useEffect(()=>{
     if(postreply.submit){
@@ -153,11 +216,16 @@ function Api(){
         formdata
       )
       .then(response=>{
-        setCommentGetResponse({
-          comment: response.data.comment, 
-          replies: response.data.replies
-        });
-        setPostReply({title: "", content: "", comment_id: "", submit:false})
+        console.log("&&&^^^ value of response in postcomment: ", response)
+        if(response.data.hasOwnProperty("error") && response.data.error=="captcha invalid"){
+          alert("Invalid captcha, please try again")
+        }else{
+          setCommentGetResponse({
+            comment: response.data.comment, 
+            replies: response.data.replies
+          });
+          setPostReply({title: "", content: "", comment_id: "", submit:false}) 
+        }
       })
       .catch(response=>{
         setPostReply({title: "", content: "", comment_id: "", submit:false})
@@ -198,7 +266,7 @@ function Api(){
       )
       .then(response=>{
         console.log("*************************************")
-        console.log("here is the response: ", response)
+        console.log("here is the response FOR VOTES: ", response)
         console.log("*************************************")
         var votes = Object.assign({}, votedatum.votes)
         var voteindex = vote.id.toString()

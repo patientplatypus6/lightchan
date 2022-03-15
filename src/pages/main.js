@@ -11,10 +11,11 @@ import {
 import './main.css';
 import CommentContainer from './components/commentcontainer';
 import PostCommentContainer from './components/postcommentcontainer';
-import { board } from '../state/state';
 import {
   commentGetState, 
-  commentGetResponse,  commentPostState, commentPostResponse, retrieveAllComments
+  boards, board,
+  commentGetResponse,  commentPostState, 
+  commentPostResponse, retrieveAllComments
 } from '../state/state'
 import ReplyContainer from './components/replycontainer';
 
@@ -23,7 +24,6 @@ function CommentList(props){
 
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
   const [currentBoard, setCurrentBoard] = useRecoilState(board)
-
 
   useEffect(()=>{
     console.log("*************")
@@ -70,34 +70,26 @@ function CommentList(props){
 
 }
 
-function Comment(){
+function Comment(props){
 
   const [getcomment, setGetComment] = useRecoilState(commentGetState);
   const [commentgetresponse, setCommentGetResponse] = useRecoilState(commentGetResponse)
   const [postcomment, setPostComment] = useRecoilState(commentPostState);
   const [commentpostresponse, setCommentPostResponse] = useRecoilState(commentPostResponse);
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
-
-  const retrieveComments = () => {
-    console.log('&&&*** inside set retrieve Comments')
-    setCommentRetrieveAll({
-      submit: true,
-      response: {}
-    })
-  }
-
-  useEffect(()=>{
-    console.log('&&&*** inside useEffect[] in Main.js')
-    retrieveComments()
-  }, [])  
+	const [boardsData, setBoardsData] = useRecoilState(boards);
 
   useEffect(()=>{
     console.log("useEffect of Comment and comment: ", postcomment)
   }, [postcomment])
 
   useEffect(()=>{
-    retrieveComments()
+    props.retrieveComments()
   }, [commentpostresponse])
+
+  useEffect(()=>{
+    console.log('value of props: ', props)
+  }, [props])
 
   return(
     <div>
@@ -110,9 +102,14 @@ function Comment(){
 }
 
 function Main(props) {
+
+  useEffect(()=>{
+    console.log('value of props: ', props)
+  })
+
   return (
     <div className='board'>
-      <Comment/> 
+      <Comment retrieveComments={props.retrieveComments} /> 
       <CommentList handleNavigate={props.handleNavigate}/>
     </div>
   );

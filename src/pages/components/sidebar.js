@@ -8,62 +8,49 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { board, retrieveAllComments } from '../../state/state';
+import { board, boards, displayBoard, currentBoardSel, retrieveAllComments } from '../../state/state';
 
 function Sidebar(props){
 
+	const [boardsData, setBoardsData] = useRecoilState(boards);
 	const [currentBoard, setCurrentBoard] = useRecoilState(board);
 	const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
 
+	const [showDisplayBoard, setDisplayBoard] = useState("main")
+
+	const selectorCurrentBoard  = useRecoilState(currentBoardSel)
+
   console.log("inside the sidebar!")
-
-	useEffect(()=>{
-		props.handleNavigate(currentBoard)
-	}, [commentretrieveall])
-
-  const retrieveComments = () => {
-    console.log('&&&*** inside set retrieve Comments')
-    setCommentRetrieveAll({
-      submit: true,
-      response: {}
-    })
-  }
 
 	const handleClick = (nme) => {
 		setCurrentBoard(nme)
-		retrieveComments()
+		props.handleNavigate(nme)
 	}
+
+	useEffect(()=>{
+		setBoardsData({submit: true, response: null})
+	}, [])
 
   return( 
     <div className='nav'>
       <div className='sidebar'>
-				CurrentBoard <span style={{fontWeight: 'bold'}}>{currentBoard}</span>
+				CurrentBoard <span style={{fontWeight: 'bold'}}>{selectorCurrentBoard[0].board_name}</span>
 				<ul className='boards'>
-					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('man')}}>
-							Main
-						</div>
-					</li>
-					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('mus')}}>
-							Music
-						</div>
-					</li>
-					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('art')}}>
-							Art
-						</div>
-					</li>
-					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('lit')}} >
-							Literature
-						</div>
-					</li>
-					<li>
-						<div className='boardlistitem' onClick={()=>{handleClick('tec')}}>
-							Technology
-						</div>
-					</li>
+					{boardsData['response']!=null?
+						<ul>
+							{boardsData['response'].map((board, key)=>{
+								const boardname = board["mnemonic"]
+								console.log("value of board in loop: ", board)
+								return(
+									<li key={key}>
+										<div className='boardlistitem' onClick={()=>{handleClick(boardname)}}>
+											{board.board_name}
+										</div>
+									</li>
+								)
+							})}
+						</ul>
+					:<div/>}
 				</ul>
       </div>
     </div>

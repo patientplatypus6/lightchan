@@ -2,6 +2,7 @@
 
 .submitcommentbutton{
   display: inline-block;
+  text-align: center;
   background-color: rgb(32, 73, 4);
   color: rgb(130, 190, 130);
   font-weight: bold;

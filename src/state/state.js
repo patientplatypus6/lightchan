@@ -8,11 +8,55 @@ import {
   useRecoilValue,
 } from 'recoil';
 
+//captionValue / setCaptchaValue
+const captcha = atom({
+  key: 'captcha',
+  default: "--"
+})
+
+//boardsData / setBoardsData
+const boards = atom({
+  key: 'boards', 
+  default: {submit: false, response: null}
+})
+
 //currentBoard / setCurrentBoard
 const board = atom({
   key: 'board',
   default: "man"
 })
+
+//showDisplayBoard / setDisplayBoard
+const displayBoard = atom({
+  key: 'displayBoard', 
+  default: {board_name: 'main', board_description: 'General Discussion', nsfw: false, mnemonic: 'man'}
+})
+
+// selectorCurrentBoard
+const currentBoardSel = selector({
+  key: 'currentBoardSel',
+  get: ({get}) => {
+    const boardsa = get(boards)
+    const boarda  = get(board)
+
+    if(boardsa.response!=null){
+      var returnvar = {}
+      boardsa.response.forEach(bd => {
+        if (bd.mnemonic == boarda){
+          returnvar = bd
+        }
+      });
+      return returnvar;
+    }else{
+      return {
+        board_name: 'main', 
+        board_description: 'General Discussion', 
+        nsfw: false, 
+        mnemonic: 'man'
+      } 
+    }
+  },
+});
 
 //vote / setVote
 const voteField = atom({
@@ -102,6 +146,10 @@ const retrieveAllComments = atom({
 
 export {
   board,
+  boards,
+  displayBoard,
+  currentBoardSel,
+  captcha,
   voteField,
   voteData,
   uploadFile,
@@ -114,5 +162,5 @@ export {
   commentPostResponse,   
   commentGetState, 
   commentGetResponse, 
-  retrieveAllComments,
+  retrieveAllComments
 }

@@ -8,6 +8,7 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { uploadFile } from '../../state/state';
+import Recaptcha from './recaptcha';
 
 function PostCommentContainer({submitComment, comment}){
 
@@ -51,9 +52,13 @@ function PostCommentContainer({submitComment, comment}){
         }}
       ></input>
       <br/>
+      <div style={{width: '100%', marginTop: '10px', textAlign: 'center'}}>
+        <Recaptcha style={{display: 'inline-block', marginRight: '10vw'}}/>
+      </div>
       <div 
         className='submitcommentbutton'
-        onClick={submitForm}>
+        onClick={submitForm}
+      >
         SUBMIT
       </div>
     </div>
