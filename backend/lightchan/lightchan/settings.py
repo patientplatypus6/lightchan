@@ -30,7 +30,18 @@ SECRET_KEY = 'django-insecure-2i205g5(5%zeh7vqj6#&)3z8f$2rv#x-x7sf!y)la=#o9&7bdr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = [
+#    'www.lightchan.org',
+#    'https://www.lightchan.org',
+#    'www.lightchan.org/*',
+#    'lightchan.org',
+#    'lightchan.org/*', 
+#    '164.92.157.124'
+#]
+
+#ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '164.92.157.124', 'lightchan.org', 'lightchan.org/*', 'www.lightchan.org', 'www.lightchan.org/*']
+
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400
@@ -74,7 +85,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000", 
     "http://localhost:3000",  
-    "http://*"
+    "http://*", 
+    "http://www.lightchan.org",
+    "https://www.lightchan.org", 
+    "https://www.lightchan.org/*"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -104,7 +118,9 @@ CORS_ALLOW_METHODS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://*", 
     "http://localhost:3000", 
-    "http://*"
+    "http://*", 
+    "https://www.lightchan.org/*",
+    "http://www.lightchan.org"
 ]
 
 ROOT_URLCONF = 'lightchan.urls'

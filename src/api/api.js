@@ -54,6 +54,8 @@ function Api(){
   const [commentretrieveall, setCommentRetrieveAll] = useRecoilState(retrieveAllComments);
   const [replyretrieveallbyid, setReplyRetrieveAllByID] = useRecoilState(retrieveAllRepliesByID);
 
+  //const [website, setWebsite] = useState("https://lig")
+
   useEffect(()=>{
     axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
     axios.defaults.xsrfCookieName = "csrftoken";
@@ -148,7 +150,7 @@ function Api(){
     // axios.defaults.headers.common['X-CSRFTOKEN']=getCookie('csrftoken'); 
     console.log("getCookie csrftoken: ", getCookie('csrftoken'))
     if(boardsData.submit){
-        var url = "http://localhost:8000/lightone/boards/"
+        var url = "https://lightchan.org/api/lightone/boards/"
         axios.get(
           url, { withCredentials: true }
         )

@@ -45,6 +45,14 @@ function App() {
     })
   }
 
+  //should be updated in NGINX but can live here for the moment
+  useEffect(()=>{
+    if(window.location.href.includes('http://')){
+	let newpath = window.location.href.replace('http://', 'https://')
+	window.location.replace(newpath)
+    }
+  }, [])
+
   return (
     <div className='mainbackground'>
       <div className='wrapper'>
