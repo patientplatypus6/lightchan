@@ -1,8 +1,12 @@
 version: "3.9"
 
 volumes:
+  nginx_ssl:
+  letencrypt_certs:
   volume1:
   data_volume:
+  varwwwcertbot:
+  certbotconf:
 
 services:
   db:
@@ -64,7 +68,18 @@ services:
       - "443:443" 
     volumes:
       - volume1:/usr/share/nginx/html
+     #- ./certbot/www:/var/www/certbot
+     #- ./certbot/conf/:/etc/nginx/ssl
+      - varwwwcertbot:/var/www/certbot
+      - certbotconf:/etc/letsencrypt 
     links:
       - "backend"
       - "db"
       - "frontend"
+  certbot:
+    image: certbot/certbot:latest
+    volumes: 
+    #- ./cerbot/www/:/var/www/certbot   
+     - varwwwcertbot:/var/www/certbot
+     - certbotconf:/etc/letsencrypt 
+    #- ./certbot/conf/:/etc/letsencrypt
